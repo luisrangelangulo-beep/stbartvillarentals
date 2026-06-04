@@ -47,27 +47,45 @@ function stbart_theme_setup() {
     ] );
 }
 
+/**
+ * Cache-busting asset version based on file modification time.
+ *
+ * Returns the file's mtime so the ?ver= query string changes whenever the
+ * file changes, forcing browsers/CDNs to fetch the new CSS after a deploy.
+ * Falls back to the theme version if the file is missing.
+ *
+ * @param string $absolute_path Absolute path to the asset file.
+ * @return string
+ */
+function stbart_asset_ver( $absolute_path ) {
+    if ( file_exists( $absolute_path ) ) {
+        return (string) filemtime( $absolute_path );
+    }
+
+    return STBART_THEME_VERSION;
+}
+
 add_action( 'wp_enqueue_scripts', 'stbart_enqueue_parent_style', 20 );
 function stbart_enqueue_parent_style() {
     wp_enqueue_style(
         'hello-elementor-parent',
         get_template_directory_uri() . '/style.css',
         [],
-        STBART_THEME_VERSION
+        stbart_asset_ver( get_template_directory() . '/style.css' )
     );
 
     wp_enqueue_style(
         'hello-elementor-child',
         get_stylesheet_uri(),
         [ 'hello-elementor-parent' ],
-        STBART_THEME_VERSION
+        stbart_asset_ver( STBART_CHILD_DIR . '/style.css' )
     );
 
     wp_enqueue_style(
         'stbart-site',
         STBART_CHILD_URL . '/assets/css/site.css',
         [ 'hello-elementor-parent', 'hello-elementor-child' ],
-        STBART_THEME_VERSION
+        stbart_asset_ver( STBART_CHILD_DIR . '/assets/css/site.css' )
     );
 
     if ( is_front_page() ) {
@@ -75,7 +93,7 @@ function stbart_enqueue_parent_style() {
             'stbart-home',
             STBART_CHILD_URL . '/assets/css/home.css',
             [ 'stbart-site' ],
-            STBART_THEME_VERSION
+            stbart_asset_ver( STBART_CHILD_DIR . '/assets/css/home.css' )
         );
     }
 }
