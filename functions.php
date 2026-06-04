@@ -4,6 +4,8 @@
  *
  * STBART bootstrap:
  * - Enqueue Hello Elementor parent stylesheet
+ * - Enqueue child stylesheet + site stylesheet
+ * - Register basic theme supports and menus
  * - Expose build id marker for deploy verification
  * - Optional manual rewrite flush trigger: /?rmof_flush=1 (admin only)
  */
@@ -14,6 +16,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'STBART_THEME_VERSION', '1.0.0' );
 define( 'STBART_CHILD_DIR', get_stylesheet_directory() );
+define( 'STBART_CHILD_URL', get_stylesheet_directory_uri() );
+
+add_action( 'after_setup_theme', 'stbart_theme_setup' );
+function stbart_theme_setup() {
+    add_theme_support( 'title-tag' );
+    add_theme_support( 'post-thumbnails' );
+    add_theme_support( 'custom-logo', [
+        'height'      => 120,
+        'width'       => 420,
+        'flex-height' => true,
+        'flex-width'  => true,
+    ] );
+
+    register_nav_menus( [
+        'primary' => 'Primary Menu',
+        'footer'  => 'Footer Menu',
+    ] );
+}
 
 add_action( 'wp_enqueue_scripts', 'stbart_enqueue_parent_style', 20 );
 function stbart_enqueue_parent_style() {
@@ -28,6 +48,13 @@ function stbart_enqueue_parent_style() {
         'hello-elementor-child',
         get_stylesheet_uri(),
         [ 'hello-elementor-parent' ],
+        STBART_THEME_VERSION
+    );
+
+    wp_enqueue_style(
+        'stbart-site',
+        STBART_CHILD_URL . '/assets/css/site.css',
+        [ 'hello-elementor-parent', 'hello-elementor-child' ],
         STBART_THEME_VERSION
     );
 }

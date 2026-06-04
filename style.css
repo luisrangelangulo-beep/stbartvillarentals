@@ -1,8 +1,8 @@
 /*
 Theme Name:     Hello Elementor Child - STBART
 Theme URI:      https://stbartvillarentals.com
-Description:    St Barth Villa Rentals custom child theme for Hello Elementor parent.
-Author:         STBART Team
+Description:    Christian Clinic stage child theme for Hello Elementor parent.
+Author:         Christian Clinic Web Team
 Author URI:     https://stbartvillarentals.com
 Template:       hello-elementor
 Version:        1.0.0
@@ -14,5 +14,5 @@ Tags:           custom, child-theme
 
 /*
  * Keep this file minimal for child theme registration.
- * Parent stylesheet is enqueued in functions.php.
+ * Main theme styles are loaded from assets/css/site.css.
  */
