@@ -27,6 +27,7 @@ add_filter( 'acf/settings/load_json', function( $paths ) {
     return array_unique( $paths );
 } );
 
+require_once STBART_CHILD_DIR . '/inc/lh-home-content.php';
 require_once STBART_CHILD_DIR . '/inc/lh-home-seed.php';
 
 add_action( 'after_setup_theme', 'stbart_theme_setup' );
