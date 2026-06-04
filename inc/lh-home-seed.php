@@ -15,7 +15,9 @@ function lh_seed_home_repeaters() {
         return;
     }
 
-    if ( get_option( 'lh_home_seeded' ) ) {
+    $force_seed = isset( $_GET['lh_seed'] ) && '1' === (string) $_GET['lh_seed']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+    if ( get_option( 'lh_home_seeded' ) && ! $force_seed ) {
         return;
     }
 
@@ -24,6 +26,13 @@ function lh_seed_home_repeaters() {
         return;
     }
 
+    // Ensure the ACF field group is already available before attempting writes.
+    if ( ! function_exists( 'get_field_object' ) || ! get_field_object( 'hero_title', $front_id ) ) {
+        return;
+    }
+
+    $did_seed = false;
+
     if ( ! get_field( 'about_bullets', $front_id ) ) {
         update_field( 'about_bullets', [
             [ 'item' => 'Christian mental health treatment' ],
@@ -31,6 +40,7 @@ function lh_seed_home_repeaters() {
             [ 'item' => 'Sex addiction recovery' ],
             [ 'item' => 'Schizophrenia resources' ],
         ], $front_id );
+        $did_seed = true;
     }
 
     if ( ! get_field( 'conditions', $front_id ) ) {
@@ -42,6 +52,7 @@ function lh_seed_home_repeaters() {
             [ 'card_title' => 'Schizophrenia & Psychosis', 'card_text' => 'Resources and support for serious mental health conditions and treatment decisions.', 'card_link' => '' ],
             [ 'card_title' => 'Help for a Loved One', 'card_text' => 'Support for spouses, parents, and families trying to help someone they care about.', 'card_link' => '' ],
         ], $front_id );
+        $did_seed = true;
     }
 
     if ( ! get_field( 'how_steps', $front_id ) ) {
@@ -51,6 +62,7 @@ function lh_seed_home_repeaters() {
             [ 'step_icon' => '', 'step_title' => 'Review Possible Options', 'step_text' => 'Lighthouse reviews available resources and treatment pathways that may fit your needs.' ],
             [ 'step_icon' => '', 'step_title' => 'Get Connected', 'step_text' => 'Your Care Guide helps you understand the next step and connect with the option you choose.' ],
         ], $front_id );
+        $did_seed = true;
     }
 
     if ( ! get_field( 'trust_cards', $front_id ) ) {
@@ -60,6 +72,7 @@ function lh_seed_home_repeaters() {
             [ 'trust_card_image' => '', 'trust_card_title' => 'Nationwide Resources', 'trust_card_text' => 'Access to a broad network of treatment programs, outpatient services, and recovery resources.' ],
             [ 'trust_card_image' => '', 'trust_card_title' => 'Confidential Guidance', 'trust_card_text' => 'Every conversation begins with a private discussion focused on understanding your situation and next steps.' ],
         ], $front_id );
+        $did_seed = true;
     }
 
     if ( ! get_field( 'founder_bullets', $front_id ) ) {
@@ -69,6 +82,7 @@ function lh_seed_home_repeaters() {
             [ 'item' => 'Editorial voice behind Lighthouse resources' ],
             [ 'item' => 'Helping individuals and families navigate treatment decisions' ],
         ], $front_id );
+        $did_seed = true;
     }
 
     if ( ! get_field( 'resources', $front_id ) ) {
@@ -78,7 +92,10 @@ function lh_seed_home_repeaters() {
             [ 'resource_title' => 'Addiction & Recovery', 'resource_text' => 'Resources for substance use, recovery support, relapse prevention, and family guidance.', 'resource_cta_label' => 'Explore Recovery Resources', 'resource_cta_link' => '' ],
             [ 'resource_title' => 'Family Support', 'resource_text' => 'Help for parents, spouses, and loved ones trying to support someone in crisis.', 'resource_cta_label' => 'Find Family Resources', 'resource_cta_link' => '' ],
         ], $front_id );
+        $did_seed = true;
     }
 
-    update_option( 'lh_home_seeded', 1 );
+    if ( $did_seed || $force_seed ) {
+        update_option( 'lh_home_seeded', 1 );
+    }
 }
