@@ -34,6 +34,13 @@ WordPress child theme repository for St Barth Villa Rentals.
 - Appearance > Themes > Hello Elementor Child - STBART
 - Visit /?rmof_flush=1 while logged in as admin
 
+## Helper scripts
+
+- Preflight checks before first deploy:
+	- `pwsh ./scripts/preflight-check.ps1`
+- Trigger first workflow runs (requires `gh` CLI auth):
+	- `pwsh ./scripts/run-first-deploy.ps1`
+
 ## Notes
 
 - This repo is intended to deploy to wp-content/themes/hello-elementor-child

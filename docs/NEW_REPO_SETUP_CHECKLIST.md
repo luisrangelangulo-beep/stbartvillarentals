@@ -54,6 +54,13 @@ After secrets + workflow values are set:
 - Verify deployed files include style.css and functions.php
 - Verify build marker in page source: stbart-build-id
 
+Optional local helpers:
+
+- Run preflight script before triggering actions:
+	- `pwsh ./scripts/preflight-check.ps1`
+- Trigger all three workflows from CLI (if gh is authenticated):
+	- `pwsh ./scripts/run-first-deploy.ps1`
+
 ## 7) WordPress connection checks
 
 - Confirm admin URL and login role for deployment verification
