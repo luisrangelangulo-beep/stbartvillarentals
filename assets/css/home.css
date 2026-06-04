@@ -16,7 +16,7 @@
     --lh-blue-soft: #e7eef5;
     --lh-line: rgba(255,255,255,.28);
     --lh-line-light: #e2e8ec;
-    --lh-maxw: 1160px;
+    --lh-maxw: 100%;
     --lh-radius: 6px;
     --lh-pad-y: clamp(48px, 7vw, 88px);
 }
@@ -34,7 +34,7 @@
 .lh-container {
     max-width: var(--lh-maxw);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 clamp(24px, 4vw, 64px);
 }
 
 .lh-home h1,
@@ -112,7 +112,7 @@
 
 .lh-hero__inner {
     position: relative;
-    padding: var(--lh-pad-y) 24px;
+    padding: var(--lh-pad-y) clamp(24px, 4vw, 64px);
     max-width: var(--lh-maxw);
     margin: 0 auto;
     width: 100%;
