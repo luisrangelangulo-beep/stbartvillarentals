@@ -18,6 +18,17 @@ define( 'STBART_THEME_VERSION', '1.0.0' );
 define( 'STBART_CHILD_DIR', get_stylesheet_directory() );
 define( 'STBART_CHILD_URL', get_stylesheet_directory_uri() );
 
+add_filter( 'acf/settings/save_json', function( $path ) {
+    return STBART_CHILD_DIR . '/acf-json';
+} );
+
+add_filter( 'acf/settings/load_json', function( $paths ) {
+    $paths[] = STBART_CHILD_DIR . '/acf-json';
+    return array_unique( $paths );
+} );
+
+require_once STBART_CHILD_DIR . '/inc/lh-home-seed.php';
+
 add_action( 'after_setup_theme', 'stbart_theme_setup' );
 function stbart_theme_setup() {
     add_theme_support( 'title-tag' );

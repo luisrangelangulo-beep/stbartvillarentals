@@ -1,0 +1,111 @@
+{
+  "key": "group_lh_home",
+  "title": "Home - Lighthouse",
+  "fields": [
+    { "key": "field_lh_tab_hero", "label": "Hero", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_hero_eyebrow", "label": "Hero Eyebrow", "name": "hero_eyebrow", "type": "text", "default_value": "" },
+    { "key": "field_lh_hero_title", "label": "Hero Title", "name": "hero_title", "type": "text", "default_value": "Christian Mental Health & Addiction Help Available 24/7" },
+    { "key": "field_lh_hero_subtext", "label": "Hero Subtext", "name": "hero_subtext", "type": "textarea", "rows": 3, "default_value": "Speak with Lighthouse Network for faith-informed guidance, treatment options, and support for addiction, mental health, or a loved one in crisis." },
+    { "key": "field_lh_hero_bg", "label": "Hero Background Image", "name": "hero_bg_image", "type": "image", "return_format": "array", "preview_size": "medium" },
+    { "key": "field_lh_hero_cta1_label", "label": "Hero CTA 1 - Label", "name": "hero_cta_1_label", "type": "text", "default_value": "Call (844) 543-3242" },
+    { "key": "field_lh_hero_cta1_link", "label": "Hero CTA 1 - Link", "name": "hero_cta_1_link", "type": "text", "instructions": "Use tel:8445433242 for the call button.", "default_value": "tel:8445433242" },
+    { "key": "field_lh_hero_cta2_label", "label": "Hero CTA 2 - Label", "name": "hero_cta_2_label", "type": "text", "default_value": "Start Online Assessment" },
+    { "key": "field_lh_hero_cta2_link", "label": "Hero CTA 2 - Link", "name": "hero_cta_2_link", "type": "text", "default_value": "" },
+
+    { "key": "field_lh_tab_about", "label": "About / Intro", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_about_eyebrow", "label": "About Eyebrow", "name": "about_eyebrow", "type": "text", "default_value": "About Lighthouse Network" },
+    { "key": "field_lh_about_heading", "label": "About Heading", "name": "about_heading", "type": "text", "default_value": "Faith-informed guidance for addiction, mental health, and life recovery" },
+    { "key": "field_lh_about_body", "label": "About Body", "name": "about_body", "type": "textarea", "rows": 4, "default_value": "Lighthouse Network is a Christian nonprofit founded in 2003, providing 24/7 guidance and online life-growth resources for individuals and families facing addiction, mental health concerns, or difficult treatment decisions." },
+    { "key": "field_lh_about_bullets", "label": "About Bullets", "name": "about_bullets", "type": "repeater", "layout": "table", "button_label": "Add Bullet", "sub_fields": [
+      { "key": "field_lh_about_bullet_item", "label": "Item", "name": "item", "type": "text", "parent_repeater": "field_lh_about_bullets" }
+    ]},
+    { "key": "field_lh_about_side_heading", "label": "Side Heading", "name": "about_side_heading", "type": "text", "default_value": "Need help deciding what to do next?" },
+    { "key": "field_lh_about_side_text", "label": "Side Text", "name": "about_side_text", "type": "textarea", "rows": 3, "default_value": "Talk with Lighthouse Network about treatment options, next steps, and support for yourself or a loved one." },
+    { "key": "field_lh_about_side_cta_label", "label": "Side CTA - Label", "name": "about_side_cta_label", "type": "text", "default_value": "Call (844) 543-3242" },
+    { "key": "field_lh_about_side_cta_link", "label": "Side CTA - Link", "name": "about_side_cta_link", "type": "text", "default_value": "tel:8445433242" },
+
+    { "key": "field_lh_tab_conditions", "label": "Conditions", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_conditions_bg", "label": "Conditions Background Image", "name": "conditions_bg_image", "type": "image", "return_format": "array", "preview_size": "medium" },
+    { "key": "field_lh_conditions", "label": "Condition Cards", "name": "conditions", "type": "repeater", "layout": "block", "button_label": "Add Condition", "sub_fields": [
+      { "key": "field_lh_cond_title", "label": "Card Title", "name": "card_title", "type": "text", "parent_repeater": "field_lh_conditions" },
+      { "key": "field_lh_cond_text", "label": "Card Text", "name": "card_text", "type": "textarea", "rows": 2, "parent_repeater": "field_lh_conditions" },
+      { "key": "field_lh_cond_link", "label": "Card Link (optional)", "name": "card_link", "type": "text", "parent_repeater": "field_lh_conditions" }
+    ]},
+    { "key": "field_lh_conditions_cta_label", "label": "Conditions CTA - Label", "name": "conditions_cta_label", "type": "text", "default_value": "Call (844) 543-3242" },
+    { "key": "field_lh_conditions_cta_link", "label": "Conditions CTA - Link", "name": "conditions_cta_link", "type": "text", "default_value": "tel:8445433242" },
+
+    { "key": "field_lh_tab_how", "label": "How It Works", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_how_heading", "label": "How Heading", "name": "how_heading", "type": "text", "default_value": "How Lighthouse Helps You Take the Next Step" },
+    { "key": "field_lh_how_subtext", "label": "How Subtext", "name": "how_subtext", "type": "textarea", "rows": 2, "default_value": "A Care Guide helps you understand what's happening, what options may fit, and how to move forward with support." },
+    { "key": "field_lh_how_steps", "label": "Steps", "name": "how_steps", "type": "repeater", "layout": "block", "button_label": "Add Step", "sub_fields": [
+      { "key": "field_lh_step_icon", "label": "Icon (image or icon-class)", "name": "step_icon", "type": "text", "instructions": "Leave as text icon-class, or switch this sub-field to Image type if using uploaded icons.", "parent_repeater": "field_lh_how_steps" },
+      { "key": "field_lh_step_title", "label": "Step Title", "name": "step_title", "type": "text", "parent_repeater": "field_lh_how_steps" },
+      { "key": "field_lh_step_text", "label": "Step Text", "name": "step_text", "type": "textarea", "rows": 2, "parent_repeater": "field_lh_how_steps" }
+    ]},
+    { "key": "field_lh_how_cta_label", "label": "How CTA - Label", "name": "how_cta_label", "type": "text", "default_value": "Call (844) 543-3242" },
+    { "key": "field_lh_how_cta_link", "label": "How CTA - Link", "name": "how_cta_link", "type": "text", "default_value": "tel:8445433242" },
+
+    { "key": "field_lh_tab_story", "label": "Story / Video", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_story_eyebrow", "label": "Story Eyebrow", "name": "story_eyebrow", "type": "text", "default_value": "Recovery Stories" },
+    { "key": "field_lh_story_heading", "label": "Story Heading", "name": "story_heading", "type": "text", "default_value": "Stories of Hope, Healing, and Recovery" },
+    { "key": "field_lh_story_body", "label": "Story Body", "name": "story_body", "type": "textarea", "rows": 3, "default_value": "Real stories can remind us that healing is possible, even when the next step feels overwhelming. Lighthouse shares stories of individuals and families who found support, treatment, and a path forward." },
+    { "key": "field_lh_story_person", "label": "Story Person", "name": "story_person", "type": "text", "default_value": "Brandi's Story" },
+    { "key": "field_lh_story_person_text", "label": "Story Person Text", "name": "story_person_text", "type": "textarea", "rows": 2, "default_value": "See how one mother found her way back from despair toward recovery, support, and renewed hope." },
+    { "key": "field_lh_story_video", "label": "Story Video URL", "name": "story_video_url", "type": "url", "instructions": "Paste a YouTube URL." },
+    { "key": "field_lh_story_cta_label", "label": "Story CTA - Label", "name": "story_cta_label", "type": "text", "default_value": "Call (844) 543-3242" },
+    { "key": "field_lh_story_cta_link", "label": "Story CTA - Link", "name": "story_cta_link", "type": "text", "default_value": "tel:8445433242" },
+
+    { "key": "field_lh_tab_trust", "label": "Why Families / Trust", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_trust_heading", "label": "Trust Heading", "name": "trust_heading", "type": "text", "default_value": "Why Families Have Turned to Lighthouse Network Since 2003" },
+    { "key": "field_lh_trust_subtext", "label": "Trust Subtext", "name": "trust_subtext", "type": "textarea", "rows": 2, "default_value": "For more than two decades, Lighthouse Network has helped individuals and families navigate addiction, mental health challenges, treatment decisions, and faith-informed recovery resources." },
+    { "key": "field_lh_trust_cards", "label": "Trust Cards", "name": "trust_cards", "type": "repeater", "layout": "block", "button_label": "Add Card", "sub_fields": [
+      { "key": "field_lh_trust_img", "label": "Card Image", "name": "trust_card_image", "type": "image", "return_format": "array", "preview_size": "medium", "parent_repeater": "field_lh_trust_cards" },
+      { "key": "field_lh_trust_title", "label": "Card Title", "name": "trust_card_title", "type": "text", "parent_repeater": "field_lh_trust_cards" },
+      { "key": "field_lh_trust_text", "label": "Card Text", "name": "trust_card_text", "type": "textarea", "rows": 2, "parent_repeater": "field_lh_trust_cards" }
+    ]},
+
+    { "key": "field_lh_tab_founder", "label": "Founder", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_founder_eyebrow", "label": "Founder Eyebrow", "name": "founder_eyebrow", "type": "text", "default_value": "Founder & Editorial Director" },
+    { "key": "field_lh_founder_name", "label": "Founder Name / Heading", "name": "founder_name", "type": "text", "default_value": "Meet Dr. David Hoskins" },
+    { "key": "field_lh_founder_photo", "label": "Founder Photo", "name": "founder_photo", "type": "image", "return_format": "array", "preview_size": "medium" },
+    { "key": "field_lh_founder_bio", "label": "Founder Bio", "name": "founder_bio", "type": "textarea", "rows": 4, "default_value": "Dr. David Hoskins founded Lighthouse Network to help individuals and families find hope, healing, and practical guidance through addiction, mental health challenges, and difficult treatment decisions. His work brings together faith-informed support, clinical awareness, and a commitment to helping people take the next step toward recovery." },
+    { "key": "field_lh_founder_bullets", "label": "Founder Bullets", "name": "founder_bullets", "type": "repeater", "layout": "table", "button_label": "Add Bullet", "sub_fields": [
+      { "key": "field_lh_founder_bullet_item", "label": "Item", "name": "item", "type": "text", "parent_repeater": "field_lh_founder_bullets" }
+    ]},
+    { "key": "field_lh_founder_cta_label", "label": "Founder CTA - Label", "name": "founder_cta_label", "type": "text", "default_value": "Learn More About Dr. Hoskins" },
+    { "key": "field_lh_founder_cta_link", "label": "Founder CTA - Link", "name": "founder_cta_link", "type": "text", "default_value": "" },
+
+    { "key": "field_lh_tab_resources", "label": "Resource Cards", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_resources", "label": "Resource Cards", "name": "resources", "type": "repeater", "layout": "block", "button_label": "Add Resource", "sub_fields": [
+      { "key": "field_lh_res_title", "label": "Title", "name": "resource_title", "type": "text", "parent_repeater": "field_lh_resources" },
+      { "key": "field_lh_res_text", "label": "Text", "name": "resource_text", "type": "textarea", "rows": 2, "parent_repeater": "field_lh_resources" },
+      { "key": "field_lh_res_cta_label", "label": "CTA - Label", "name": "resource_cta_label", "type": "text", "parent_repeater": "field_lh_resources" },
+      { "key": "field_lh_res_cta_link", "label": "CTA - Link", "name": "resource_cta_link", "type": "text", "parent_repeater": "field_lh_resources" }
+    ]},
+
+    { "key": "field_lh_tab_final", "label": "Final CTA", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_final_heading", "label": "Final Heading", "name": "final_heading", "type": "text", "default_value": "You Don't Have to Figure This Out Alone" },
+    { "key": "field_lh_final_text", "label": "Final Text", "name": "final_text", "type": "textarea", "rows": 3, "default_value": "Whether you're seeking help for yourself or someone you love, Lighthouse Network can help you talk through the next step with faith-informed guidance and practical support. Many insurance providers cover our residential options." },
+    { "key": "field_lh_final_cta1_label", "label": "Final CTA 1 - Label", "name": "final_cta_1_label", "type": "text", "default_value": "Call (844) 543-3242" },
+    { "key": "field_lh_final_cta1_link", "label": "Final CTA 1 - Link", "name": "final_cta_1_link", "type": "text", "default_value": "tel:8445433242" },
+    { "key": "field_lh_final_cta2_label", "label": "Final CTA 2 - Label", "name": "final_cta_2_label", "type": "text", "default_value": "Start Online Assessment" },
+    { "key": "field_lh_final_cta2_link", "label": "Final CTA 2 - Link", "name": "final_cta_2_link", "type": "text", "default_value": "" },
+    { "key": "field_lh_final_emergency", "label": "Emergency Note", "name": "final_emergency_note", "type": "text", "default_value": "If this is a medical emergency or someone is in immediate danger, call 911 or your local emergency number." },
+
+    { "key": "field_lh_tab_seo", "label": "SEO & Meta", "name": "", "type": "tab", "placement": "top" },
+    { "key": "field_lh_seo_title", "label": "SEO Title", "name": "seo_title", "type": "text", "instructions": "Optional - leave blank to let Rank Math handle it." },
+    { "key": "field_lh_seo_desc", "label": "SEO Description", "name": "seo_description", "type": "textarea", "rows": 2, "instructions": "Optional - leave blank to let Rank Math handle it." }
+  ],
+  "location": [
+    [ { "param": "page_type", "operator": "==", "value": "front_page" } ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "Lighthouse Network homepage content fields.",
+  "show_in_rest": 0
+}
