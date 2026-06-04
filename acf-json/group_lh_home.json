@@ -38,7 +38,7 @@
     { "key": "field_lh_how_heading", "label": "How Heading", "name": "how_heading", "type": "text", "default_value": "How Lighthouse Helps You Take the Next Step" },
     { "key": "field_lh_how_subtext", "label": "How Subtext", "name": "how_subtext", "type": "textarea", "rows": 2, "default_value": "A Care Guide helps you understand what's happening, what options may fit, and how to move forward with support." },
     { "key": "field_lh_how_steps", "label": "Steps", "name": "how_steps", "type": "repeater", "layout": "block", "button_label": "Add Step", "sub_fields": [
-      { "key": "field_lh_step_icon", "label": "Icon (image or icon-class)", "name": "step_icon", "type": "text", "instructions": "Leave as text icon-class, or switch this sub-field to Image type if using uploaded icons.", "parent_repeater": "field_lh_how_steps" },
+      { "key": "field_lh_step_icon", "label": "Step Icon (image)", "name": "step_icon", "type": "image", "return_format": "array", "preview_size": "thumbnail", "instructions": "Upload a small icon image (SVG or PNG, around 40px). Optional.", "parent_repeater": "field_lh_how_steps" },
       { "key": "field_lh_step_title", "label": "Step Title", "name": "step_title", "type": "text", "parent_repeater": "field_lh_how_steps" },
       { "key": "field_lh_step_text", "label": "Step Text", "name": "step_text", "type": "textarea", "rows": 2, "parent_repeater": "field_lh_how_steps" }
     ]},
