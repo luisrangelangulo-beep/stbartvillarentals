@@ -34,22 +34,35 @@ body {
     padding: 0 24px;
 }
 
-.site-main {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
+/*
+ * Full-width homepage. The parent theme (Hello Elementor) constrains the
+ * content wrapper with higher-specificity selectors and a boxed body width,
+ * so we override those forcefully here. Section backgrounds then span the
+ * full viewport while the inner .lh-container still caps readable content
+ * at --lh-maxw and centers it.
+ */
+body {
+    max-width: none !important;
 }
 
-/*
- * Full-width homepage: section backgrounds (hero, conditions, resources, etc.)
- * span the full viewport. The inner .lh-container still caps the readable
- * content at --lh-maxw and centers it.
- */
-.lh-home {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
+.site-main,
+main.site-main {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.lh-home,
+main.lh-home,
+#lh-home {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 .site-header {
