@@ -15,10 +15,10 @@ jobs:
       group: deploy-theme-${{ github.ref }}
       cancel-in-progress: true
     env:
-      CPANEL_USER: CHANGE_ME_CPANEL_USER
-      THEME_TARGET: /home/CHANGE_ME_CPANEL_USER/public_html/wp-content/themes/hello-elementor-child
-      DEPLOY_TMP_BASE: /home/CHANGE_ME_CPANEL_USER/deploy_tmp/hello-elementor-child
-      DEPLOY_TMP: /home/CHANGE_ME_CPANEL_USER/deploy_tmp/hello-elementor-child-${{ github.run_id }}-${{ github.run_attempt }}
+      CPANEL_USER: stbartvillarenta
+      THEME_TARGET: /home/stbartvillarenta/public_html/wp-content/themes/hello-elementor-child
+      DEPLOY_TMP_BASE: /home/stbartvillarenta/deploy_tmp/hello-elementor-child
+      DEPLOY_TMP: /home/stbartvillarenta/deploy_tmp/hello-elementor-child-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - name: Checkout

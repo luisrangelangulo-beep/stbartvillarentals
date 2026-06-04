@@ -7,7 +7,7 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     env:
-      CPANEL_USER: CHANGE_ME_CPANEL_USER
+      CPANEL_USER: stbartvillarenta
     steps:
       - name: SSH probe
         uses: appleboy/ssh-action@v1.0.3
