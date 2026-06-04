@@ -57,6 +57,15 @@ function stbart_enqueue_parent_style() {
         [ 'hello-elementor-parent', 'hello-elementor-child' ],
         STBART_THEME_VERSION
     );
+
+    if ( is_front_page() ) {
+        wp_enqueue_style(
+            'stbart-home',
+            STBART_CHILD_URL . '/assets/css/home.css',
+            [ 'stbart-site' ],
+            STBART_THEME_VERSION
+        );
+    }
 }
 
 function stbart_get_build_id() {
