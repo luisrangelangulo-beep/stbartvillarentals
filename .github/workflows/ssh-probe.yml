@@ -1,0 +1,33 @@
+name: SSH Probe (temp - delete after)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      CPANEL_USER: CHANGE_ME_CPANEL_USER
+    steps:
+      - name: SSH probe
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USER }}
+          port: ${{ secrets.SFTP_PORT }}
+          key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SFTP_PASSPHRASE }}
+          debug: true
+          script: |
+            echo "=== home content ==="
+            ls -F /home/$CPANEL_USER/
+            echo "=== public_html content ==="
+            ls -F /home/$CPANEL_USER/public_html/
+            echo "=== themes content ==="
+            ls -F /home/$CPANEL_USER/public_html/wp-content/themes/
+            echo "=== target theme dir check ==="
+            ls -d /home/$CPANEL_USER/public_html/wp-content/themes/hello-elementor-child/ || echo "THEME DIR NOT FOUND"
+            echo "=== zip check ==="
+            command -v zip || echo "zip NOT FOUND"
+            echo "=== deploy_tmp check ==="
+            ls -F /home/$CPANEL_USER/deploy_tmp/ 2>/dev/null || echo "deploy_tmp NOT FOUND (will be created on first deploy)"

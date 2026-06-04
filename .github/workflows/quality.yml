@@ -1,0 +1,27 @@
+name: Quality (PHP lint)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  php-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          coverage: none
+
+      - name: PHP syntax lint (all PHP files)
+        run: |
+          find . -type f -name "*.php" \
+            -not -path "./vendor/*" \
+            -print0 | xargs -0 -n1 php -l
