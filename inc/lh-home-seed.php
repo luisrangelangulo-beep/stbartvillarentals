@@ -33,7 +33,7 @@ function lh_seed_home_repeaters() {
 
     $did_seed = false;
 
-    if ( ! get_field( 'about_bullets', $front_id ) ) {
+    if ( $force_seed || ! get_field( 'about_bullets', $front_id ) ) {
         update_field( 'about_bullets', [
             [ 'item' => 'Christian mental health treatment' ],
             [ 'item' => 'Addiction support' ],
@@ -43,7 +43,7 @@ function lh_seed_home_repeaters() {
         $did_seed = true;
     }
 
-    if ( ! get_field( 'conditions', $front_id ) ) {
+    if ( $force_seed || ! get_field( 'conditions', $front_id ) ) {
         update_field( 'conditions', [
             [ 'card_title' => 'Addiction Support', 'card_text' => 'Guidance for substance use, recovery options, and next steps.', 'card_link' => '' ],
             [ 'card_title' => 'Alcohol or Drug Use', 'card_text' => 'Support for individuals or families facing alcohol or substance-related concerns.', 'card_link' => '' ],
@@ -55,7 +55,7 @@ function lh_seed_home_repeaters() {
         $did_seed = true;
     }
 
-    if ( ! get_field( 'how_steps', $front_id ) ) {
+    if ( $force_seed || ! get_field( 'how_steps', $front_id ) ) {
         update_field( 'how_steps', [
             [ 'step_icon' => '', 'step_title' => 'Call or Start Online', 'step_text' => 'Speak confidentially with Lighthouse about what you or your loved one is facing.' ],
             [ 'step_icon' => '', 'step_title' => "Share What's Going On", 'step_text' => 'A Care Guide asks about your situation, treatment needs, location, and insurance or financial considerations.' ],
@@ -65,7 +65,7 @@ function lh_seed_home_repeaters() {
         $did_seed = true;
     }
 
-    if ( ! get_field( 'trust_cards', $front_id ) ) {
+    if ( $force_seed || ! get_field( 'trust_cards', $front_id ) ) {
         update_field( 'trust_cards', [
             [ 'trust_card_image' => '', 'trust_card_title' => 'Founded in 2003', 'trust_card_text' => 'Over twenty years helping callers find guidance, resources, and hope.' ],
             [ 'trust_card_image' => '', 'trust_card_title' => 'Faith-Informed Approach', 'trust_card_text' => 'Support that respects Christian values while helping families understand available options.' ],
@@ -75,7 +75,7 @@ function lh_seed_home_repeaters() {
         $did_seed = true;
     }
 
-    if ( ! get_field( 'founder_bullets', $front_id ) ) {
+    if ( $force_seed || ! get_field( 'founder_bullets', $front_id ) ) {
         update_field( 'founder_bullets', [
             [ 'item' => 'Founder of Lighthouse Network' ],
             [ 'item' => 'Christian mental health and addiction recovery advocate' ],
@@ -85,7 +85,7 @@ function lh_seed_home_repeaters() {
         $did_seed = true;
     }
 
-    if ( ! get_field( 'resources', $front_id ) ) {
+    if ( $force_seed || ! get_field( 'resources', $front_id ) ) {
         update_field( 'resources', [
             [ 'resource_title' => 'Devotionals', 'resource_text' => 'Daily encouragement rooted in faith, hope, and personal growth.', 'resource_cta_label' => 'Read Devotionals', 'resource_cta_link' => '' ],
             [ 'resource_title' => 'Mental Health Resources', 'resource_text' => 'Guidance for anxiety, depression, emotional distress, and treatment decisions.', 'resource_cta_label' => 'Explore Mental Health', 'resource_cta_link' => '' ],
