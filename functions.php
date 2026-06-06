@@ -152,3 +152,31 @@ function stbart_optional_manual_flush() {
 
     flush_rewrite_rules( true );
 }
+
+add_action( 'init', 'stbart_auth_debug_endpoint' );
+function stbart_auth_debug_endpoint() {
+    if ( ! isset( $_GET['stbart_auth_debug'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        return;
+    }
+
+    $http_authorization = isset( $_SERVER['HTTP_AUTHORIZATION'] ) ? (string) $_SERVER['HTTP_AUTHORIZATION'] : '';
+    $redirect_http_authorization = isset( $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ) ? (string) $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] : '';
+    $php_auth_user = isset( $_SERVER['PHP_AUTH_USER'] ) ? (string) $_SERVER['PHP_AUTH_USER'] : '';
+    $php_auth_pw = isset( $_SERVER['PHP_AUTH_PW'] ) ? (string) $_SERVER['PHP_AUTH_PW'] : '';
+
+    nocache_headers();
+    header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
+
+    echo wp_json_encode( [
+        'has_http_authorization'          => '' !== $http_authorization,
+        'http_authorization_prefix'       => '' !== $http_authorization ? substr( $http_authorization, 0, 6 ) : '',
+        'has_redirect_http_authorization' => '' !== $redirect_http_authorization,
+        'redirect_authorization_prefix'   => '' !== $redirect_http_authorization ? substr( $redirect_http_authorization, 0, 6 ) : '',
+        'has_php_auth_user'               => '' !== $php_auth_user,
+        'php_auth_user'                   => $php_auth_user,
+        'has_php_auth_pw'                 => '' !== $php_auth_pw,
+        'request_uri'                     => isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '',
+        'server_software'                 => isset( $_SERVER['SERVER_SOFTWARE'] ) ? (string) $_SERVER['SERVER_SOFTWARE'] : '',
+    ] );
+    exit;
+}
