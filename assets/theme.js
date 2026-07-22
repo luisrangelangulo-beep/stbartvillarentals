@@ -42,6 +42,53 @@
     });
   }
 
+  // ── Photo slider ───────────────────────────────────────────────────────
+  // CSS scroll-snap does the scrolling; JS only drives the arrows and the
+  // counter. No carousel library: the markup stays usable (and scrollable by
+  // touch, trackpad and keyboard) even if this script never runs.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lvc-slider]'), function (slider) {
+    var track = slider.querySelector('[data-lvc-slider-track]');
+    var prev = slider.querySelector('[data-lvc-slider-prev]');
+    var next = slider.querySelector('[data-lvc-slider-next]');
+    var current = slider.querySelector('[data-lvc-slider-current]');
+    if (!track) { return; }
+
+    var slides = track.children;
+
+    var step = function () {
+      return slides.length ? slides[0].getBoundingClientRect().width : track.clientWidth;
+    };
+
+    var index = function () {
+      var s = step();
+      return s ? Math.round(track.scrollLeft / s) : 0;
+    };
+
+    var sync = function () {
+      var i = index();
+      if (current) { current.textContent = String(Math.min(i + 1, slides.length)); }
+      if (prev) { prev.disabled = track.scrollLeft <= 1; }
+      if (next) { next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1; }
+    };
+
+    var go = function (dir) {
+      track.scrollBy({ left: dir * step(), behavior: 'smooth' });
+    };
+
+    if (prev) { prev.addEventListener('click', function () { go(-1); }); }
+    if (next) { next.addEventListener('click', function () { go(1); }); }
+    track.addEventListener('scroll', function () {
+      window.clearTimeout(track._lvcT);
+      track._lvcT = window.setTimeout(sync, 80);
+    }, { passive: true });
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+
+    sync();
+  });
+
   // ── Inquiry forms ──────────────────────────────────────────────────────
   var cfg = window.LVC_INQ || {};
   var forms = document.querySelectorAll('[data-lvc-inquiry]');

@@ -70,6 +70,33 @@ if ( ! function_exists( 'lvc_property_image' ) ) {
 }
 
 /**
+ * Parse a gallery meta field into a clean list of image URLs.
+ *
+ * Split on commas AND newlines: galleries arrive comma-separated about as often
+ * as line-separated, and a newline-only split silently resolves a 30-image
+ * gallery to one URL (see docs/LESSONS_LEARNED.md §3). Values are trimmed —
+ * comma-separated exports usually carry a leading space — and anything that is
+ * not an http(s) URL is dropped rather than rendered as a broken <img>.
+ *
+ * @param string $field   Meta/ACF field name, e.g. 'gallery_squares'.
+ * @param int    $post_id Property ID.
+ * @return string[]
+ */
+if ( ! function_exists( 'lvc_gallery_urls' ) ) {
+	function lvc_gallery_urls( $field, $post_id ) {
+		$raw = (string) lvc_field( $field, $post_id );
+		if ( '' === $raw ) {
+			return array();
+		}
+		$parts = array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', $raw ) ) );
+
+		return array_values( array_filter( $parts, static function ( $u ) {
+			return (bool) preg_match( '#^https?://#i', $u );
+		} ) );
+	}
+}
+
+/**
  * ACF field with a graceful fallback chain when the plugin or value is absent.
  * Safe to call even if ACF is not active.
  */

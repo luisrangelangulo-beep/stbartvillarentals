@@ -96,23 +96,84 @@ if ( ! function_exists( 'lvc_schema_property' ) ) {
 			}
 			$schema['address'] = $addr;
 		}
+
+		// Graft real reviews + aggregate rating onto the property node.
+		if ( function_exists( 'lvc_schema_reviews' ) ) {
+			$reviews = lvc_schema_reviews( $post_id );
+			if ( $reviews ) {
+				$schema = array_merge( $schema, $reviews );
+			}
+		}
+
 		lvc_jsonld( $schema );
 
 		$crumbs = array( lvc_brand() => home_url( '/' ), lvc_config( 'cpt_plural', 'Villas' ) => lvc_archive_url(), get_the_title( $post_id ) => '' );
 		lvc_jsonld( lvc_schema_breadcrumb( $crumbs ) );
 
-		// FAQ schema from flat faq_q1..faq_a4 (1:1 with the generator).
+		// FAQ schema — same source the template renders from (repeater, else the
+		// flat pairs, else universal), so what shows and what is marked up never
+		// diverge. Only genuine on-page answers become schema.
+		$faq = function_exists( 'lvc_property_faq' ) ? lvc_property_faq( $post_id ) : array();
 		$qas = array();
-		for ( $i = 1; $i <= 4; $i++ ) {
-			$q = lvc_field( 'faq_q' . $i, $post_id );
-			$a = lvc_field( 'faq_a' . $i, $post_id );
-			if ( $q && $a ) {
-				$qas[] = array( '@type' => 'Question', 'name' => $q, 'acceptedAnswer' => array( '@type' => 'Answer', 'text' => wp_strip_all_tags( $a ) ) );
-			}
+		foreach ( $faq as $row ) {
+			$qas[] = array(
+				'@type'          => 'Question',
+				'name'           => $row['question'],
+				'acceptedAnswer' => array( '@type' => 'Answer', 'text' => wp_strip_all_tags( $row['answer'] ) ),
+			);
 		}
 		if ( count( $qas ) >= 2 ) {
 			lvc_jsonld( array( '@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $qas ) );
 		}
+	}
+}
+
+/**
+ * Review + aggregateRating for a property's real testimonials.
+ *
+ * Emitted only for reviews that carry a rating — Google requires reviewRating
+ * on each Review, and an invented aggregate is a policy risk. Skips entirely
+ * when there are no rated reviews.
+ */
+if ( ! function_exists( 'lvc_schema_reviews' ) ) {
+	function lvc_schema_reviews( $post_id ) {
+		$rows = lvc_field( 'testimonials', $post_id, array() );
+		if ( ! is_array( $rows ) || ! $rows ) {
+			return array();
+		}
+
+		$reviews = array();
+		$sum     = 0;
+		foreach ( $rows as $t ) {
+			$quote  = isset( $t['quote'] ) ? trim( (string) $t['quote'] ) : '';
+			$rating = isset( $t['rating'] ) ? (float) $t['rating'] : 0;
+			if ( '' === $quote || $rating <= 0 ) {
+				continue;
+			}
+			$name      = isset( $t['guest_name'] ) ? trim( (string) $t['guest_name'] ) : '';
+			$reviews[] = array(
+				'@type'         => 'Review',
+				'reviewBody'    => $quote,
+				'reviewRating'  => array( '@type' => 'Rating', 'ratingValue' => $rating, 'bestRating' => 5 ),
+				'author'        => array( '@type' => 'Person', 'name' => $name !== '' ? $name : 'Verified guest' ),
+			);
+			$sum += $rating;
+		}
+
+		if ( ! $reviews ) {
+			return array();
+		}
+
+		$count = count( $reviews );
+		return array(
+			'review'          => $reviews,
+			'aggregateRating' => array(
+				'@type'       => 'AggregateRating',
+				'ratingValue' => round( $sum / $count, 1 ),
+				'reviewCount' => $count,
+				'bestRating'  => 5,
+			),
+		);
 	}
 }
 

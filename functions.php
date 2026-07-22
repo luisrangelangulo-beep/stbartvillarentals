@@ -23,6 +23,7 @@ foreach ( array(
 	'inc/cpt/register-property.php',
 	'inc/property/data.php',
 	'inc/property/fields.php',
+	'inc/property/content-fallback.php',
 	'inc/property/term-fields.php',
 	'inc/inquiry/ajax-handler.php',
 	'inc/inquiry/event-fields.php',

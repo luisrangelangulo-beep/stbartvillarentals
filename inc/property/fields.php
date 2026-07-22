@@ -62,7 +62,12 @@ function lvc_register_property_fields() {
 
 		/* ── Media ────────────────────────────────────────────────── */
 		array( 'key' => 'field_lvc_tab_media', 'label' => 'Media', 'type' => 'tab' ),
-		array( 'key' => 'field_lvc_gallery', 'label' => 'Gallery URLs', 'name' => 'gallery_squares', 'type' => 'textarea', 'instructions' => 'One Cloudflare R2 image URL per line. The first is the hero fallback when no FIFU / featured image is set.' ),
+		// Two galleries, matching the portfolio convention on every live site:
+		// `gallery_squares` is a curated short set rendered as a grid, and
+		// `gallery_slider` is the full shoot rendered as a carousel. Keep them
+		// separate — the grid is an editorial pick, not the first N of the slider.
+		array( 'key' => 'field_lvc_gallery', 'label' => 'Gallery — Squares (grid)', 'name' => 'gallery_squares', 'type' => 'textarea', 'instructions' => 'Curated set shown as the square grid, typically 6. One image URL per line, or comma-separated. NOT used as a card/hero image — those are curated separately.' ),
+		array( 'key' => 'field_lvc_gallery_slider', 'label' => 'Gallery — Slider (full set)', 'name' => 'gallery_slider', 'type' => 'textarea', 'instructions' => 'The full photo set shown in the carousel. One image URL per line, or comma-separated. Falls back to the squares set when empty.' ),
 
 		/* ── FAQ (flat — 1:1 with the generator) ──────────────────── */
 		array( 'key' => 'field_lvc_tab_faq', 'label' => 'FAQ', 'type' => 'tab' ),
@@ -74,6 +79,73 @@ function lvc_register_property_fields() {
 		array( 'key' => 'field_lvc_faq_a3', 'label' => 'A3', 'name' => 'faq_a3', 'type' => 'textarea', 'rows' => 2 ),
 		array( 'key' => 'field_lvc_faq_q4', 'label' => 'Q4', 'name' => 'faq_q4', 'type' => 'text' ),
 		array( 'key' => 'field_lvc_faq_a4', 'label' => 'A4', 'name' => 'faq_a4', 'type' => 'textarea', 'rows' => 2 ),
+
+		/* ── Editorial copy ───────────────────────────────────────────
+		   Ported from Punta Mita. Each of these resolves through
+		   lvc_content(): property → place term → universal option →
+		   shipped default, so leaving one blank degrades gracefully
+		   instead of rendering an empty section. */
+		array( 'key' => 'field_lvc_tab_editorial', 'label' => 'Editorial', 'type' => 'tab' ),
+		array( 'key' => 'field_lvc_tagline', 'label' => 'Tagline', 'name' => 'tagline', 'type' => 'text', 'maxlength' => 120, 'instructions' => 'One line under the H1. Falls back to the destination, then the universal tagline.' ),
+		array( 'key' => 'field_lvc_intro_paragraph', 'label' => 'Intro Paragraph', 'name' => 'intro_paragraph', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Opening paragraph of the About section.' ),
+		array( 'key' => 'field_lvc_setting_positioning', 'label' => 'Setting & Positioning', 'name' => 'setting_positioning', 'type' => 'textarea', 'rows' => 4, 'instructions' => 'Where the property sits and what that means for a stay.' ),
+		array( 'key' => 'field_lvc_editorial_text', 'label' => 'Editorial Line', 'name' => 'editorial_text', 'type' => 'text', 'instructions' => 'Short pull-line used above the inquiry band.' ),
+		array( 'key' => 'field_lvc_view_type', 'label' => 'View Type', 'name' => 'view_type', 'type' => 'text', 'instructions' => 'e.g. Ocean view, Beachfront. Shown as a highlight chip.' ),
+		array( 'key' => 'field_lvc_access_type', 'label' => 'Access Type', 'name' => 'access_type', 'type' => 'text', 'instructions' => 'e.g. Beachfront, Walk to beach. Shown as a highlight chip.' ),
+
+		/* ── What's included ──────────────────────────────────────── */
+		array( 'key' => 'field_lvc_included_items', 'label' => 'Included', 'name' => 'included_items', 'type' => 'textarea', 'rows' => 6, 'instructions' => 'One item per line. Commas are content here, so lines only.' ),
+		array( 'key' => 'field_lvc_on_request_items', 'label' => 'On Request', 'name' => 'on_request_items', 'type' => 'textarea', 'rows' => 6, 'instructions' => 'One item per line. Arranged but not included in the rate.' ),
+
+		/* ── Curated images ───────────────────────────────────────────
+		   Separate from the galleries on purpose. NOTHING derives these
+		   from gallery position — photo 01 is an arbitrary frame, and on
+		   Tulum all 46 populated properties ended up with the same shot
+		   as both card and hero. See docs/LESSONS_LEARNED.md §2. */
+		array( 'key' => 'field_lvc_feature_image', 'label' => 'Card Image', 'name' => 'feature_image', 'type' => 'url', 'instructions' => 'Curated image for grids, cards and social sharing. Always wins over the WordPress featured image.' ),
+		array( 'key' => 'field_lvc_hero_image', 'label' => 'Hero Image', 'name' => 'hero_image', 'type' => 'url', 'instructions' => 'Curated banner image for the single page. Pick a DIFFERENT shot from the card image.' ),
+
+		/* ── Rates & flags ────────────────────────────────────────── */
+		array( 'key' => 'field_lvc_nightly_rate_from', 'label' => 'Nightly Rate From', 'name' => 'nightly_rate_from', 'type' => 'number', 'instructions' => 'Numeric, no currency symbol. Used for sorting and schema, not printed as a promise.' ),
+		array( 'key' => 'field_lvc_off_market', 'label' => 'Off market', 'name' => 'off_market', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Keeps the URL live for existing links but drops the property from the index and from listings.' ),
+		array( 'key' => 'field_lvc_internal_notes', 'label' => 'Internal Notes', 'name' => 'internal_notes', 'type' => 'textarea', 'rows' => 3, 'instructions' => 'Never rendered on the front end.' ),
+
+		/* ── FAQ (repeater) ───────────────────────────────────────────
+		   Preferred over the flat faq_q1..a4 pairs above, which stay for
+		   sheet-sync compatibility. Falls back to the universal set. */
+		array(
+			'key'          => 'field_lvc_faq_items',
+			'label'        => 'FAQ Items',
+			'name'         => 'faq_items',
+			'type'         => 'repeater',
+			'layout'       => 'row',
+			'button_label' => 'Add FAQ',
+			'instructions' => 'Needs 2+ complete rows before FAQPage schema is emitted.',
+			'sub_fields'   => array(
+				array( 'key' => 'field_lvc_faq_item_q', 'label' => 'Question', 'name' => 'question', 'type' => 'text', 'wrapper' => array( 'width' => '50' ) ),
+				array( 'key' => 'field_lvc_faq_item_a', 'label' => 'Answer', 'name' => 'answer', 'type' => 'textarea', 'rows' => 3, 'wrapper' => array( 'width' => '50' ) ),
+			),
+		),
+
+		/* ── Testimonials (repeater) ──────────────────────────────── */
+		array(
+			'key'          => 'field_lvc_testimonials',
+			'label'        => 'Testimonials',
+			'name'         => 'testimonials',
+			'type'         => 'repeater',
+			'layout'       => 'block',
+			'button_label' => 'Add Testimonial',
+			'instructions' => 'Real guest reviews only. An unverified or invented review is worse than an empty section at this price point.',
+			'sub_fields'   => array(
+				array( 'key' => 'field_lvc_t_quote', 'label' => 'Quote', 'name' => 'quote', 'type' => 'textarea', 'rows' => 3 ),
+				array( 'key' => 'field_lvc_t_name', 'label' => 'Guest Name', 'name' => 'guest_name', 'type' => 'text', 'wrapper' => array( 'width' => '30' ) ),
+				array( 'key' => 'field_lvc_t_location', 'label' => 'Guest Location', 'name' => 'guest_location', 'type' => 'text', 'wrapper' => array( 'width' => '30' ) ),
+				array( 'key' => 'field_lvc_t_date', 'label' => 'Stay Date', 'name' => 'stay_date', 'type' => 'text', 'wrapper' => array( 'width' => '40' ) ),
+				array( 'key' => 'field_lvc_t_rating', 'label' => 'Rating', 'name' => 'rating', 'type' => 'number', 'min' => 1, 'max' => 5, 'wrapper' => array( 'width' => '30' ) ),
+				array( 'key' => 'field_lvc_t_verified', 'label' => 'Verified guest', 'name' => 'verified_guest', 'type' => 'true_false', 'ui' => 1, 'wrapper' => array( 'width' => '35' ) ),
+				array( 'key' => 'field_lvc_t_source', 'label' => 'Source', 'name' => 'source_label', 'type' => 'text', 'wrapper' => array( 'width' => '35' ) ),
+			),
+		),
 	) );
 
 	acf_add_local_field_group( array(
@@ -84,4 +156,46 @@ function lvc_register_property_fields() {
 		'position' => 'normal',
 		'active'   => true,
 	) );
+
+	/* ── Universal content (tier 3 of lvc_content) ─────────────────────
+	   One options page holding the site-wide defaults every property falls
+	   back to. Editing a line here fixes that section on every property that
+	   has not overridden it — which is the whole reason a sparse catalogue
+	   still reads as finished. */
+	if ( function_exists( 'acf_add_options_page' ) ) {
+		acf_add_options_page( array(
+			'page_title'  => 'Universal Content',
+			'menu_title'  => 'Universal Content',
+			'menu_slug'   => 'lvc-universal-content',
+			'parent_slug' => 'edit.php?post_type=' . $cpt,
+			'capability'  => 'edit_posts',
+			'autoload'    => true,
+		) );
+
+		acf_add_local_field_group( array(
+			'key'    => 'group_lvc_universal',
+			'title'  => 'Universal Content — used when a ' . strtolower( (string) lvc_config( 'cpt_singular', 'villa' ) ) . ' leaves a field blank',
+			'fields' => array(
+				array( 'key' => 'field_lvc_u_tagline', 'label' => 'Tagline', 'name' => 'universal_tagline', 'type' => 'text', 'maxlength' => 120 ),
+				array( 'key' => 'field_lvc_u_intro', 'label' => 'Property Intro', 'name' => 'universal_property_intro', 'type' => 'textarea', 'rows' => 5 ),
+				array( 'key' => 'field_lvc_u_setting', 'label' => 'Setting & Positioning', 'name' => 'universal_setting', 'type' => 'textarea', 'rows' => 5 ),
+				array( 'key' => 'field_lvc_u_editorial', 'label' => 'Editorial Line', 'name' => 'universal_editorial', 'type' => 'text' ),
+				array( 'key' => 'field_lvc_u_included', 'label' => 'Included (one per line)', 'name' => 'universal_included', 'type' => 'textarea', 'rows' => 6 ),
+				array( 'key' => 'field_lvc_u_on_request', 'label' => 'On Request (one per line)', 'name' => 'universal_on_request', 'type' => 'textarea', 'rows' => 6 ),
+				array( 'key' => 'field_lvc_u_faq_tab', 'label' => 'Fallback FAQ', 'type' => 'tab' ),
+				array( 'key' => 'field_lvc_u_q1', 'label' => 'Q1', 'name' => 'universal_faq_q1', 'type' => 'text' ),
+				array( 'key' => 'field_lvc_u_a1', 'label' => 'A1', 'name' => 'universal_faq_a1', 'type' => 'textarea', 'rows' => 3 ),
+				array( 'key' => 'field_lvc_u_q2', 'label' => 'Q2', 'name' => 'universal_faq_q2', 'type' => 'text' ),
+				array( 'key' => 'field_lvc_u_a2', 'label' => 'A2', 'name' => 'universal_faq_a2', 'type' => 'textarea', 'rows' => 3 ),
+				array( 'key' => 'field_lvc_u_q3', 'label' => 'Q3', 'name' => 'universal_faq_q3', 'type' => 'text' ),
+				array( 'key' => 'field_lvc_u_a3', 'label' => 'A3', 'name' => 'universal_faq_a3', 'type' => 'textarea', 'rows' => 3 ),
+				array( 'key' => 'field_lvc_u_q4', 'label' => 'Q4', 'name' => 'universal_faq_q4', 'type' => 'text' ),
+				array( 'key' => 'field_lvc_u_a4', 'label' => 'A4', 'name' => 'universal_faq_a4', 'type' => 'textarea', 'rows' => 3 ),
+				array( 'key' => 'field_lvc_u_q5', 'label' => 'Q5', 'name' => 'universal_faq_q5', 'type' => 'text' ),
+				array( 'key' => 'field_lvc_u_a5', 'label' => 'A5', 'name' => 'universal_faq_a5', 'type' => 'textarea', 'rows' => 3 ),
+			),
+			'location' => array( array( array( 'param' => 'options_page', 'operator' => '==', 'value' => 'lvc-universal-content' ) ) ),
+			'active'   => true,
+		) );
+	}
 }

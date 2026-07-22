@@ -52,6 +52,9 @@ All structural hooks use the `lvc-` prefix, grouped by component, e.g.:
 | FAQ | `.lvc-faq`, `.lvc-faq__item`, `.lvc-faq__q`, `.lvc-faq__a` |
 | Section header | `.lvc-eyebrow`, `.lvc-sec-title` |
 | Term archive | `.lvc-term`, `.lvc-term__head`, `.lvc-term__intro`, `.lvc-term__body`, `.lvc-term__siblings` |
+| Property single | `.lvc-single`, `.lvc-single__hero`, `.lvc-single__hero--img`, `.lvc-single__img`, `.lvc-single__scrim`, `.lvc-single__heading`, `.lvc-single__title`, `.lvc-single__tagline`, `.lvc-single__hero-cta`, `.lvc-single__trust`, `.lvc-single__stats`, `.lvc-single__stat`, `.lvc-single__highlights`, `.lvc-chip`, `.lvc-single__body`, `.lvc-single__main`, `.lvc-single__about`, `.lvc-single__intro`, `.lvc-single__included`, `.lvc-included__cols`, `.lvc-included__col`, `.lvc-list`, `.lvc-list--request`, `.lvc-single__amenities`, `.lvc-amenities`, `.lvc-single__service`, `.lvc-single__testimonials`, `.lvc-testimonials`, `.lvc-testimonial`, `.lvc-single__sidebar`, `.lvc-single__inquiry`, `.lvc-single__inquiry-line`, `.lvc-single__mobilebar`, `.lvc-single__mobilebar-name`, `.lvc-prose` |
+| Gallery (grid) | `.lvc-gallery`, `.lvc-gallery__item` |
+| Gallery (slider) | `.lvc-slider`, `.lvc-slider__track`, `.lvc-slider__slide`, `.lvc-slider__nav`, `.lvc-slider__nav--prev`, `.lvc-slider__nav--next`, `.lvc-slider__count` |
 | Mega menu | `.lvc-nav__mega-wrap`, `.lvc-nav__mega-toggle`, `.lvc-mega`, `.lvc-mega--drawer`, `.lvc-mega__col`, `.lvc-mega__col--compact`, `.lvc-mega__label`, `.lvc-mega__list`, `.lvc-mega__item`, `.lvc-mega__chip`, `.lvc-mega__name`, `.lvc-mega__count`, `.lvc-mega__all` |
 
 ### Mega menu notes
@@ -74,3 +77,17 @@ label (“villas”) with CSS `::after` — never bake it into content.
 - Brands **only** edit `theme-config.php` + this stylesheet. No template edits.
 - Keep it dark-theme-first (per the Luxury UX baseline) unless a brand explicitly differs.
 - Don't reintroduce inline `<style>` in templates — that's exactly what this core removes.
+
+### Gallery notes
+Every live site in the portfolio renders **both** galleries on a property page: a
+curated square grid (typically 6 images) and a slider carrying the full shoot.
+They are separate fields, not the first N of one list — the grid is an editorial
+pick. `gallery_slider` falls back to `gallery_squares` when empty.
+
+The slider is **CSS scroll-snap**, not a carousel library. Style
+`.lvc-slider__track` with `display:flex; overflow-x:auto; scroll-snap-type:x
+mandatory` and give `.lvc-slider__slide` a `scroll-snap-align`. `assets/theme.js`
+only drives the arrows and the counter, so the gallery still scrolls by touch,
+trackpad and keyboard if the script never loads. Set the slide width in CSS —
+the JS reads it back to compute one step, so a `100%` slide pages one photo at a
+time and a `60%` slide shows a peek of the next.

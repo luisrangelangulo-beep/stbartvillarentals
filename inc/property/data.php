@@ -124,3 +124,66 @@ if ( ! function_exists( 'lvc_price_range' ) ) {
 		return $map[ (string) $tier ] ?? '$$';
 	}
 }
+
+/* ── Off-market properties ───────────────────────────────────────────────
+ *
+ * A property that is no longer bookable keeps its URL working — existing
+ * links, bookmarks and inbound SEO all still resolve — but drops out of
+ * listings and out of the search index. Ported from Punta Mita.
+ *
+ * Registering the `off_market` field without these two hooks would make it a
+ * toggle that looks like it works and does nothing, which is the exact defect
+ * documented in docs/LESSONS_LEARNED.md §11.
+ */
+
+/** Hide off-market properties from archives, taxonomies and the related rail. */
+add_action( 'pre_get_posts', function ( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	$cpt = lvc_config( 'cpt', 'villa' );
+	$is_property_list = $query->is_post_type_archive( $cpt )
+		|| $query->is_tax( array_keys( (array) lvc_config( 'taxonomies', array() ) ) );
+
+	if ( ! $is_property_list ) {
+		return;
+	}
+
+	$meta = (array) $query->get( 'meta_query' );
+	// NOT EXISTS is required alongside != '1': properties saved before the
+	// field existed have no row at all, and a bare comparison drops them.
+	$meta[] = array(
+		'relation' => 'OR',
+		array( 'key' => 'off_market', 'compare' => 'NOT EXISTS' ),
+		array( 'key' => 'off_market', 'value' => '1', 'compare' => '!=' ),
+	);
+	$query->set( 'meta_query', $meta );
+} );
+
+/** Noindex an off-market property while leaving its URL live. */
+if ( ! function_exists( 'lvc_is_off_market' ) ) {
+	function lvc_is_off_market( $post_id = null ) {
+		$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+		return '1' === (string) get_post_meta( $post_id, 'off_market', true );
+	}
+}
+
+add_filter( 'wp_robots', function ( $robots ) {
+	if ( is_singular( lvc_config( 'cpt', 'villa' ) ) && lvc_is_off_market() ) {
+		$robots['noindex'] = true;
+		$robots['follow']  = true;
+		unset( $robots['index'], $robots['nofollow'] );
+	}
+	return $robots;
+}, 99 );
+
+// Rank Math emits its own robots tag and ignores wp_robots — both filters are
+// required. See docs/LESSONS_LEARNED.md §10.
+add_filter( 'rank_math/frontend/robots', function ( $robots ) {
+	if ( is_singular( lvc_config( 'cpt', 'villa' ) ) && lvc_is_off_market() ) {
+		$robots['index']  = 'noindex';
+		$robots['follow'] = 'follow';
+	}
+	return $robots;
+}, 99 );

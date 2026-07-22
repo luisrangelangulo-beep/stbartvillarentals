@@ -150,3 +150,27 @@ with, and a hand-built WP menu never keeps pace with them. `nav_mega` in
 new term is linked from every page the moment it exists. Do not link terms you
 deliberately noindex (the `range` key exists for this) — that spends crawl on
 pages you have told Google to skip.
+
+## 14. Layered content fallback keeps a sparse catalogue looking finished
+
+Ported from Punta Mita as `lvc_content()` (inc/property/content-fallback.php).
+Editorial copy resolves through four tiers — property field → place term field →
+site-wide universal option → shipped default — so a property with three fields
+filled still renders a complete page, and filling the fourth silently upgrades
+it. Editors set the universals once in Properties → Universal Content.
+
+Two rules that keep it honest:
+- Never read `get_field()` directly for any field lvc_content() owns — that
+  bypasses the fallback and the blank section it prevents comes back.
+- The on-page render and the JSON-LD must read from the SAME resolver. The FAQ
+  schema originally read the flat `faq_q1..4` while the template preferred the
+  repeater, so a villa with repeater FAQs showed them but emitted no schema.
+  Both now call `lvc_property_faq()`.
+
+## 15. A structured-data review needs a rating, and must be real
+
+`lvc_schema_reviews()` emits Review + AggregateRating only for testimonials that
+carry a numeric rating, and skips entirely when none do. Google requires
+`reviewRating` on every Review, and an invented aggregate is a policy risk — the
+testimonial repeater is for genuine, verified guest reviews only. An empty
+section beats a fabricated one at this price point.
