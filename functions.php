@@ -1,154 +1,65 @@
 <?php
 /**
- * Hello Elementor Child Theme functions
- *
- * STBART bootstrap:
- * - Enqueue Hello Elementor parent stylesheet
- * - Enqueue child stylesheet + site stylesheet
- * - Register basic theme supports and menus
- * - Expose build id marker for deploy verification
- * - Optional manual rewrite flush trigger: /?rmof_flush=1 (admin only)
+ * Luxury Villa Theme Core — bootstrap / loader
+ * ─────────────────────────────────────────────────────────────────────────
+ * Loads the brand config + modular includes, enqueues parent + brand styles,
+ * and wires theme-wide hooks. Keep this file thin: feature logic lives in inc/.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
-define( 'STBART_THEME_VERSION', '1.0.0' );
-define( 'STBART_CHILD_DIR', get_stylesheet_directory() );
-define( 'STBART_CHILD_URL', get_stylesheet_directory_uri() );
+define( 'LVC_DIR', get_stylesheet_directory() );
+define( 'LVC_URI', get_stylesheet_directory_uri() );
+define( 'LVC_VERSION', '0.1.0' );
 
-add_filter( 'acf/settings/save_json', function( $path ) {
-    return STBART_CHILD_DIR . '/acf-json';
-} );
+// Brand config first — everything else reads from it.
+require_once LVC_DIR . '/theme-config.php';
 
-add_filter( 'acf/settings/load_json', function( $paths ) {
-    $paths[] = STBART_CHILD_DIR . '/acf-json';
-    return array_unique( $paths );
-} );
-
-require_once STBART_CHILD_DIR . '/inc/lh-home-content.php';
-require_once STBART_CHILD_DIR . '/inc/lh-home-seed.php';
-
-add_action( 'after_setup_theme', 'stbart_theme_setup' );
-function stbart_theme_setup() {
-    add_theme_support( 'title-tag' );
-    add_theme_support( 'post-thumbnails' );
-    add_theme_support( 'custom-logo', [
-        'height'      => 120,
-        'width'       => 420,
-        'flex-height' => true,
-        'flex-width'  => true,
-    ] );
-
-    register_nav_menus( [
-        'primary' => 'Primary Menu',
-        'footer'  => 'Footer Menu',
-    ] );
+// Modular includes (only those that exist load, so partial pulls are safe).
+foreach ( array(
+	'inc/helpers.php',
+	'inc/cpt/register-property.php',
+	'inc/property/data.php',
+	'inc/property/fields.php',
+	'inc/property/term-fields.php',
+	'inc/inquiry/ajax-handler.php',
+	'inc/inquiry/event-fields.php',
+	'inc/conversion/whatsapp-float.php',
+	'inc/conversion/inquiry-frontend.php',
+	'inc/sync/rest-sync.php',
+	'inc/seo/schema.php',
+	'inc/nav/mega-menu.php',
+	'inc/template-router.php',
+) as $lvc_relative ) {
+	$lvc_path = LVC_DIR . '/' . $lvc_relative;
+	if ( file_exists( $lvc_path ) ) {
+		require_once $lvc_path;
+	}
 }
 
 /**
- * Cache-busting asset version based on file modification time.
- *
- * Returns the file's mtime so the ?ver= query string changes whenever the
- * file changes, forcing browsers/CDNs to fetch the new CSS after a deploy.
- * Falls back to the theme version if the file is missing.
- *
- * @param string $absolute_path Absolute path to the asset file.
- * @return string
+ * Styles: parent (Hello Elementor) + optional per-brand stylesheet.
+ * The core ships NO CSS; create assets/brand.css per site (see docs/TOKEN_CONTRACT.md).
  */
-function stbart_asset_ver( $absolute_path ) {
-    if ( file_exists( $absolute_path ) ) {
-        return (string) filemtime( $absolute_path );
-    }
+add_action( 'wp_enqueue_scripts', function () {
+	wp_enqueue_style( 'hello-elementor', get_template_directory_uri() . '/style.css', array(), LVC_VERSION );
 
-    return STBART_THEME_VERSION;
-}
+	if ( file_exists( LVC_DIR . '/assets/brand.css' ) ) {
+		wp_enqueue_style( 'lvc-brand', LVC_URI . '/assets/brand.css', array( 'hello-elementor' ), (string) filemtime( LVC_DIR . '/assets/brand.css' ) );
+	}
+}, 20 );
 
-add_action( 'wp_enqueue_scripts', 'stbart_enqueue_parent_style', 20 );
-function stbart_enqueue_parent_style() {
-    wp_enqueue_style(
-        'hello-elementor-parent',
-        get_template_directory_uri() . '/style.css',
-        [],
-        stbart_asset_ver( get_template_directory() . '/style.css' )
-    );
+// Theme supports + primary nav menu (set the menu in Appearance → Menus).
+add_action( 'after_setup_theme', function () {
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'title-tag' );
+	register_nav_menus( array( 'primary' => 'Primary Navigation' ) );
+} );
 
-    wp_enqueue_style(
-        'hello-elementor-child',
-        get_stylesheet_uri(),
-        [ 'hello-elementor-parent' ],
-        stbart_asset_ver( STBART_CHILD_DIR . '/style.css' )
-    );
+// Let templates own page output (Hello Elementor wrappers/title off).
+add_filter( 'hello_elementor_page_title', '__return_false' );
 
-    wp_enqueue_style(
-        'stbart-site',
-        STBART_CHILD_URL . '/assets/css/site.css',
-        [ 'hello-elementor-parent', 'hello-elementor-child' ],
-        stbart_asset_ver( STBART_CHILD_DIR . '/assets/css/site.css' )
-    );
-
-    if ( is_front_page() ) {
-        wp_enqueue_style(
-            'stbart-home',
-            STBART_CHILD_URL . '/assets/css/home.css',
-            [ 'stbart-site' ],
-            stbart_asset_ver( STBART_CHILD_DIR . '/assets/css/home.css' )
-        );
-    }
-}
-
-function stbart_get_build_id() {
-    static $build_id = null;
-
-    if ( null !== $build_id ) {
-        return $build_id;
-    }
-
-    $file = trailingslashit( STBART_CHILD_DIR ) . 'build-id.txt';
-    if ( file_exists( $file ) && is_readable( $file ) ) {
-        $raw = trim( (string) file_get_contents( $file ) );
-        if ( '' !== $raw ) {
-            $build_id = $raw;
-            return $build_id;
-        }
-    }
-
-    $build_id = 'STBART_THEME_VERSION=' . STBART_THEME_VERSION;
-    return $build_id;
-}
-
-add_action( 'wp_head', 'stbart_output_build_meta', 2 );
-function stbart_output_build_meta() {
-    if ( is_admin() ) {
-        return;
-    }
-
-    echo '<meta name="stbart-build-id" content="' . esc_attr( stbart_get_build_id() ) . '">' . "\n";
-}
-
-add_action( 'wp_footer', 'stbart_output_build_comment', 99 );
-function stbart_output_build_comment() {
-    if ( is_admin() ) {
-        return;
-    }
-
-    echo "\n<!-- stbart-build-id: " . esc_html( stbart_get_build_id() ) . " -->\n";
-}
-
-add_action( 'init', 'stbart_optional_manual_flush' );
-function stbart_optional_manual_flush() {
-    if ( is_admin() ) {
-        return;
-    }
-
-    if ( ! isset( $_GET['rmof_flush'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        return;
-    }
-
-    if ( ! current_user_can( 'manage_options' ) ) {
-        return;
-    }
-
-    flush_rewrite_rules( true );
-}
+// Flush rewrites when the theme is activated so CPT/taxonomy URLs resolve.
+add_action( 'after_switch_theme', 'flush_rewrite_rules' );

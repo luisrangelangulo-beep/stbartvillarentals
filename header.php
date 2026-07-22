@@ -1,43 +1,96 @@
 <?php
 /**
- * Site header template.
- *
- * @package hello-elementor-child
+ * Theme header — site <head> + fixed navigation.
+ * Brand logo/name from config; menu from the 'primary' nav location.
+ * No styling here (see assets/brand.css); structure + hooks only.
  */
-
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
-?><!doctype html>
+?>
+<!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
-    <meta charset="<?php bloginfo( 'charset' ); ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?php wp_head(); ?>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?php wp_head(); ?>
 </head>
-<body <?php body_class(); ?>>
+<body <?php body_class( 'lvc-body' ); ?>>
 <?php wp_body_open(); ?>
-<header class="site-header">
-    <div class="container header-inner">
-        <a class="brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-            <?php
-            if ( has_custom_logo() ) {
-                the_custom_logo();
-            } else {
-                echo esc_html( get_bloginfo( 'name' ) );
-            }
-            ?>
-        </a>
-        <nav class="main-nav" aria-label="Primary menu">
-            <?php
-            wp_nav_menu( [
-                'theme_location' => 'primary',
-                'container'      => false,
-                'fallback_cb'    => false,
-                'menu_class'     => 'menu-list',
-            ] );
-            ?>
-        </nav>
-    </div>
+
+<header class="lvc-header" data-lvc-header>
+	<div class="lvc-header__inner">
+		<a class="lvc-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( lvc_brand() ); ?>">
+			<?php
+			$lvc_logo = (string) lvc_config( 'brand_logo_svg', '' );
+			if ( $lvc_logo ) {
+				echo $lvc_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted inline SVG from config
+			} else {
+				echo '<span class="lvc-header__name">' . esc_html( lvc_brand() ) . '</span>';
+				$tag = (string) lvc_config( 'brand_tagline', '' );
+				if ( $tag ) {
+					echo '<span class="lvc-header__tagline">' . esc_html( $tag ) . '</span>';
+				}
+			}
+			?>
+		</a>
+
+		<nav class="lvc-nav" aria-label="Primary">
+			<?php
+			if ( has_nav_menu( 'primary' ) ) {
+				wp_nav_menu( array(
+					'theme_location' => 'primary',
+					'container'      => false,
+					'menu_class'     => 'lvc-nav__list',
+					'fallback_cb'    => false,
+					'depth'          => 2,
+				) );
+			}
+
+			// Taxonomy browse panel. Toggled by a button rather than hover so it
+			// is reachable by keyboard and on touch; theme.js handles open/close.
+			if ( function_exists( 'lvc_mega_menu' ) && lvc_config( 'nav_mega', array() ) ) :
+				?>
+				<div class="lvc-nav__mega-wrap" data-lvc-mega-wrap>
+					<button class="lvc-nav__mega-toggle" type="button" aria-expanded="false" aria-haspopup="true" data-lvc-mega-toggle>
+						<?php echo esc_html( lvc_config( 'nav_mega_label', 'Browse' ) ); ?>
+					</button>
+					<?php lvc_mega_menu( 'panel' ); ?>
+				</div>
+				<?php
+			endif;
+			?>
+		</nav>
+
+		<div class="lvc-header__actions">
+			<?php if ( lvc_whatsapp_url() ) : ?>
+				<a class="lvc-btn lvc-btn--ghost" href="<?php echo esc_url( lvc_whatsapp_url() ); ?>" target="_blank" rel="noopener">Speak With a Specialist</a>
+			<?php endif; ?>
+			<a class="lvc-btn" href="<?php echo esc_url( lvc_archive_url() ); ?>">Request Availability &rarr;</a>
+		</div>
+
+		<button class="lvc-header__toggle" type="button" aria-label="Open menu" aria-expanded="false" data-lvc-drawer-toggle>
+			<span></span><span></span><span></span>
+		</button>
+	</div>
+
+	<div class="lvc-drawer" data-lvc-drawer hidden>
+		<?php
+		if ( has_nav_menu( 'primary' ) ) {
+			wp_nav_menu( array(
+				'theme_location' => 'primary',
+				'container'      => false,
+				'menu_class'     => 'lvc-drawer__list',
+				'fallback_cb'    => false,
+				'depth'          => 2,
+			) );
+		}
+
+		// Same taxonomy links on mobile. Orphaned archives are orphaned on every
+		// breakpoint, so the drawer carries the panel rather than dropping it.
+		if ( function_exists( 'lvc_mega_menu' ) ) {
+			lvc_mega_menu( 'drawer' );
+		}
+		?>
+	</div>
 </header>
-<main class="site-main">

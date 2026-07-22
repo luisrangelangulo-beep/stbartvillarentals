@@ -1,11 +1,18 @@
 name: Deploy Theme
 
+# Manual-only, triggered via "Run workflow", never on push.
+#
+# READ THIS BEFORE ACTIVATING ANYTHING. stbartvillarentals.com currently serves
+# a DIFFERENT project — the "Lighthouse Network" clinic site, 15 published pages
+# on the same WordPress install. It is blog_public=0 so Google cannot see it,
+# but it is real work and it is still there.
+#
+# Deploying is SAFE: the child theme lands in its own directory beside the
+# active `hello-elementor` parent, and nothing renders from it until someone
+# switches the active theme in WP Admin. ACTIVATING is what replaces the clinic
+# site's front end. Do not activate until the clinic project has been moved or
+# retired and that call has been made explicitly.
 on:
-  push:
-    branches:
-      - "main"
-    tags:
-      - "v*"
   workflow_dispatch:
 
 jobs:
@@ -16,9 +23,9 @@ jobs:
       cancel-in-progress: true
     env:
       CPANEL_USER: stbartvillarenta
-      THEME_TARGET: /home/stbartvillarenta/public_html/wp-content/themes/hello-elementor-child
-      DEPLOY_TMP_BASE: /home/stbartvillarenta/deploy_tmp/hello-elementor-child
-      DEPLOY_TMP: /home/stbartvillarenta/deploy_tmp/hello-elementor-child-${{ github.run_id }}-${{ github.run_attempt }}
+      THEME_DIR: st-barts-villa-rentals
+      THEME_TARGET: /home/stbartvillarenta/public_html/wp-content/themes/st-barts-villa-rentals
+      DEPLOY_TMP: /home/stbartvillarenta/deploy_tmp/stbarts-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - name: Checkout
@@ -26,29 +33,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Ensure tag is on main
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          git fetch origin main --no-tags --prune --depth=200
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
-
       - name: Build clean theme package
         run: |
+          set -euo pipefail
           mkdir -p build
           printf "%s\n" "sha=${GITHUB_SHA}" "ref=${GITHUB_REF_NAME}" "run=${GITHUB_RUN_NUMBER}" "time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > build-id.txt
           zip -r build/theme.zip . \
             -x '*.git*' \
             -x '.github/*' \
-            -x 'documents/*' \
-            -x 'vendor/*' \
+            -x 'docs/*' \
             -x 'node_modules/*' \
-            -x 'composer.json' \
-            -x 'composer.lock' \
-            -x 'phpcs.xml' \
-            -x 'package.json' \
-            -x 'package-lock.json' \
-            -x '.editorconfig' \
-            -x '.eslintrc*' \
             -x 'build/*'
           echo "Theme package size:"
           du -h build/theme.zip
@@ -74,33 +68,32 @@ jobs:
           port: ${{ secrets.SFTP_PORT }}
           key: ${{ secrets.SFTP_PRIVATE_KEY }}
           passphrase: ${{ secrets.SFTP_PASSPHRASE }}
-          envs: CPANEL_USER,THEME_TARGET,DEPLOY_TMP
+          envs: CPANEL_USER,THEME_DIR,THEME_TARGET,DEPLOY_TMP
           script: |
             set -euo pipefail
             ZIP_PATH="$DEPLOY_TMP/theme.zip"
             RELEASE_PATH="$DEPLOY_TMP/release-$(date +%Y%m%d-%H%M%S)"
 
             echo "Validating deploy target..."
-            EXPECTED_PREFIX="/home/$CPANEL_USER/public_html/wp-content/themes/"
-            EXPECTED_THEME="hello-elementor-child"
+            EXPECTED="/home/$CPANEL_USER/public_html/wp-content/themes/$THEME_DIR"
+            if [ "$THEME_TARGET" != "$EXPECTED" ]; then
+              echo "ERROR: refusing to deploy to THEME_TARGET=$THEME_TARGET"
+              echo "Expected exactly: $EXPECTED"
+              exit 1
+            fi
 
-            case "$THEME_TARGET" in
-              "$EXPECTED_PREFIX$EXPECTED_THEME")
-                echo "Target OK: $THEME_TARGET"
-                ;;
-              *)
-                echo "ERROR: refusing to deploy to THEME_TARGET=$THEME_TARGET"
-                echo "Expected exactly: ${EXPECTED_PREFIX}${EXPECTED_THEME}"
+            # Never let a bad env var point this at the live parent theme.
+            case "$THEME_DIR" in
+              hello-elementor|hello-elementor/*)
+                echo "ERROR: THEME_DIR must never be the active parent theme."
                 exit 1
                 ;;
             esac
 
-            echo "Backing up current theme..."
-            BACKUP_NAME="hello-elementor-child-backup-$(date +%Y%m%d-%H%M%S).zip"
+            echo "Backing up current child theme (if any)..."
             cd "$(dirname "$THEME_TARGET")"
-            if [ -d "$(basename "$THEME_TARGET")" ]; then
-              zip -qr "$BACKUP_NAME" "$(basename "$THEME_TARGET")"
-              echo "Backup created: $BACKUP_NAME"
+            if [ -d "$THEME_DIR" ]; then
+              zip -qr "${THEME_DIR}-backup-$(date +%Y%m%d-%H%M%S).zip" "$THEME_DIR"
             fi
 
             echo "Extracting release to temp folder..."
@@ -108,35 +101,88 @@ jobs:
             unzip -o "$ZIP_PATH" -d "$RELEASE_PATH"
 
             echo "Sanity-check release contents..."
-            test -f "$RELEASE_PATH/style.css" || { echo "Missing style.css in release"; exit 1; }
-            test -f "$RELEASE_PATH/functions.php" || { echo "Missing functions.php in release"; exit 1; }
+            test -f "$RELEASE_PATH/style.css"       || { echo "Missing style.css";       exit 1; }
+            test -f "$RELEASE_PATH/functions.php"   || { echo "Missing functions.php";   exit 1; }
+            test -f "$RELEASE_PATH/theme-config.php" || { echo "Missing theme-config.php"; exit 1; }
+            grep -q '^Template: hello-elementor$' "$RELEASE_PATH/style.css" || { echo "style.css lost its Template header"; exit 1; }
 
-            for forbidden in .github documents node_modules vendor build; do
+            for forbidden in .github docs node_modules vendor build; do
               if [ -e "$RELEASE_PATH/$forbidden" ]; then
                 echo "Forbidden path in release: $forbidden"
                 exit 1
               fi
             done
 
-            echo "Atomic sync to active child theme..."
+            echo "Atomic sync (deletes files removed from the repo)..."
             mkdir -p "$THEME_TARGET"
             rsync -a --delete "$RELEASE_PATH/" "$THEME_TARGET/"
 
             echo "Cleaning up temp artifacts..."
             rm -rf "$RELEASE_PATH" "$ZIP_PATH" "$DEPLOY_TMP"
 
-            echo "Optional cache clear (safe no-op if path missing)..."
-            rm -rf "/home/$CPANEL_USER/public_html/wp-content/cache/"* || true
-
-            echo "Flushing WordPress rewrite rules via WP-CLI..."
-            WP_CLI="/home/$CPANEL_USER/bin/wp"
+            # Only meaningful once the child theme is active; harmless before.
             WP_PATH="/home/$CPANEL_USER/public_html"
-            if command -v wp &>/dev/null; then
-              wp --path="$WP_PATH" rewrite flush --hard || true
+            WP_CLI="/home/$CPANEL_USER/bin/wp"
+            if command -v wp >/dev/null 2>&1; then
+              WP="wp"
             elif [ -f "$WP_CLI" ]; then
-              "$WP_CLI" --path="$WP_PATH" rewrite flush --hard || true
+              WP="$WP_CLI"
             else
-              echo "WP-CLI not found; skipping rewrite flush (visit /?rmof_flush=1 manually)"
+              WP=""
+            fi
+            if [ -n "$WP" ]; then
+              ACTIVE=$($WP --path="$WP_PATH" option get stylesheet 2>/dev/null || echo "")
+              echo "Active stylesheet on server: ${ACTIVE:-unknown}"
+              if [ "$ACTIVE" = "$THEME_DIR" ]; then
+                echo "Child theme is ACTIVE — flushing rewrites and caches."
+                $WP --path="$WP_PATH" rewrite flush --hard || true
+                $WP --path="$WP_PATH" transient delete --all || true
+                $WP --path="$WP_PATH" cache flush || true
+              else
+                echo "Child theme is INACTIVE — skipping flush (nothing user-facing changed)."
+              fi
+            else
+              echo "WP-CLI not found — skipping flush."
             fi
 
             echo "Deploy complete."
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          BASE="https://stbartvillarentals.com"
+          CB="deploy-${{ github.run_id }}"
+          fail=0
+
+          check_200() {
+            local url="$1" sep="?" code
+            case "$url" in *\?*) sep="&";; esac
+            code=$(curl -s --retry 2 --retry-delay 3 -o /tmp/body.html -w '%{http_code}' -L "${url}${sep}smoketest=${CB}")
+            if [ "$code" != "200" ]; then
+              echo "::error::FAIL (expected 200, got $code): $url"
+              fail=1
+            elif grep -qiE 'fatal error|parse error on line|uncaught exception' /tmp/body.html; then
+              echo "::error::FAIL (PHP error in body): $url"
+              fail=1
+            else
+              echo "OK ($code): $url"
+            fi
+          }
+
+          # The homepage must survive every deploy, active theme or not.
+          check_200 "$BASE/"
+
+          # The villa CPT is registered BY this theme, so it does not exist while
+          # the theme is inactive and there is no villa content yet either. Probe
+          # the REST route and only assert the villa URLs once they are real —
+          # otherwise this step would fail on every pre-cutover deploy, which
+          # trains everyone to ignore a red build.
+          SLUG=$(curl -s "$BASE/wp-json/wp/v2/villa?per_page=1&_fields=slug" | sed -n 's/.*"slug":"\([^"]*\)".*/\1/p')
+          if [ -n "$SLUG" ]; then
+            check_200 "$BASE/luxury-villas/"
+            check_200 "$BASE/luxury-villas/$SLUG/"
+          else
+            echo "::notice::No villa CPT/content yet — skipped the villa checks. Expected until the theme is active and villas are imported."
+          fi
+
+          exit $fail

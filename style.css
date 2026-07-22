@@ -1,18 +1,16 @@
 /*
-Theme Name:     Hello Elementor Child - STBART
-Theme URI:      https://stbartvillarentals.com
-Description:    Christian Clinic stage child theme for Hello Elementor parent.
-Author:         Christian Clinic Web Team
-Author URI:     https://stbartvillarentals.com
-Template:       hello-elementor
-Version:        1.0.0
-Text Domain:    hello-elementor-child
-License:        GNU General Public License v2 or later
-License URI:    http://www.gnu.org/licenses/gpl-2.0.html
-Tags:           custom, child-theme
+Theme Name: St Barts Villa Rentals
+Theme URI: https://github.com/luisrangelangulo-beep/stbartvillarentals
+Description: Child theme for stbartvillarentals.com, built on luxury-villa-theme-core. Structure, query logic, schema and inquiry handling; brand styling lives in assets/brand.css (see docs/TOKEN_CONTRACT.md) and brand values in theme-config.php.
+Template: hello-elementor
+Author: Novamira
+Version: 0.1.0
+Requires PHP: 8.0
 */
 
-/*
- * Keep this file minimal for child theme registration.
- * Main theme styles are loaded from assets/css/site.css.
- */
+/* ──────────────────────────────────────────────────────────────────────────
+   Intentionally no styles. This is a virgin skeleton.
+   Per-brand styling lives in assets/brand.css. Templates emit semantic class
+   names and CSS-variable hooks documented in docs/TOKEN_CONTRACT.md so each
+   site is "paint by numbers" — no markup changes needed to restyle.
+   ────────────────────────────────────────────────────────────────────────── */
