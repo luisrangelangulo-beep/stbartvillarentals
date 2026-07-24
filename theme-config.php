@@ -47,6 +47,8 @@ if ( ! function_exists( 'lvc_config' ) ) {
 				'whatsapp_url'   => '',
 				'response_time'  => 'within 24 hours',
 				'region'         => 'St Barthélemy', // Page schema areaServed.
+				// Social profile URLs → schema sameAs (knowledge-panel signal). Empty = omitted.
+				'social_profiles' => array(),
 
 				/* ── Property model (CPT) ─────────────────────────────── */
 				'cpt'              => 'villa',          // villa | chalet | condo | property

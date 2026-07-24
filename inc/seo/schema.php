@@ -227,6 +227,32 @@ if ( lvc_config( 'theme_owns_schema', true ) ) {
 		if ( is_singular( lvc_config( 'cpt', 'villa' ) ) || is_tax( array_keys( (array) lvc_config( 'taxonomies', array() ) ) ) || is_post_type_archive( lvc_config( 'cpt', 'villa' ) ) ) {
 			return array();
 		}
+		// Enrich the single authoritative Organization node (Rank Math's) in place
+		// with the contact/area data the theme config holds — no duplicate node.
+		// All additions guard on non-empty config, so an unfilled config is a no-op.
+		$org_phone  = (string) lvc_config( 'phone', '' );
+		$org_region = (string) lvc_config( 'region', '' );
+		$org_same   = array_values( array_filter( array_map( 'strval', (array) lvc_config( 'social_profiles', array() ) ) ) );
+		foreach ( $data as $key => $node ) {
+			if ( ! is_array( $node ) ) {
+				continue;
+			}
+			$type   = $node['@type'] ?? '';
+			$is_org = ( 'Organization' === $type ) || ( is_array( $type ) && in_array( 'Organization', $type, true ) );
+			if ( ! $is_org ) {
+				continue;
+			}
+			if ( '' !== $org_phone && empty( $node['telephone'] ) ) {
+				$data[ $key ]['telephone'] = $org_phone;
+			}
+			if ( '' !== $org_region && empty( $node['areaServed'] ) ) {
+				$data[ $key ]['areaServed'] = $org_region;
+			}
+			if ( ! empty( $org_same ) && empty( $node['sameAs'] ) ) {
+				$data[ $key ]['sameAs'] = $org_same;
+			}
+		}
+
 		return $data;
 	}, 99 );
 }
