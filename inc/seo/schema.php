@@ -369,6 +369,17 @@ if ( lvc_config( 'noindex_thin_terms', true ) ) {
 	}, 99 );
 
 	/*
+	 * Rank Math renders sitemaps to wp-content/uploads/rank-math/ and only
+	 * invalidates them on post and term saves — never on deploy. The rule
+	 * below is theme code, so without this the cached XML kept listing the
+	 * excluded terms after the filter shipped (observed on Anguilla and
+	 * Costalegre 2026-07-31: sitemaps unchanged until caching was turned off).
+	 * These sitemaps are small and crawler-facing, so regenerating per request
+	 * costs nothing worth measuring; the larger sites purge on deploy instead.
+	 */
+	add_filter( 'rank_math/sitemap/enable_caching', '__return_false' );
+
+	/*
 	 * A noindexed term must not stay advertised in the XML sitemap — that is
 	 * the "submitted but noindexed" warning in Search Console, and it spends
 	 * crawl budget on pages we are telling Google to drop. Rank Math builds
