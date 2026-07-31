@@ -367,4 +367,33 @@ if ( lvc_config( 'noindex_thin_terms', true ) ) {
 		}
 		return $robots;
 	}, 99 );
+
+	/*
+	 * A noindexed term must not stay advertised in the XML sitemap — that is
+	 * the "submitted but noindexed" warning in Search Console, and it spends
+	 * crawl budget on pages we are telling Google to drop. Rank Math builds
+	 * sitemap entries outside the front-end query, so the robots filters above
+	 * cannot remove them.
+	 *
+	 * Only the TERM-level clauses of lvc_term_should_noindex() apply here: its
+	 * is_paged()/$_GET clauses describe a request, and there is no request
+	 * while the sitemap is being generated. Keep the two in step — they are
+	 * deliberately adjacent so a threshold change cannot update one and not
+	 * the other.
+	 */
+	add_filter( 'rank_math/sitemap/entry', function ( $url, $type, $object ) {
+		if ( 'term' !== $type || ! ( $object instanceof WP_Term ) ) {
+			return $url;
+		}
+		if ( ! in_array( $object->taxonomy, array_keys( (array) lvc_config( 'taxonomies', array() ) ), true ) ) {
+			return $url;
+		}
+		if ( (int) $object->count < (int) lvc_config( 'min_index_count', 3 ) ) {
+			return false;
+		}
+		if ( '0' === (string) get_term_meta( $object->term_id, 'search_visible', true ) ) {
+			return false;
+		}
+		return $url;
+	}, 99, 3 );
 }
