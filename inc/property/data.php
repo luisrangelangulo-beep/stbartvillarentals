@@ -125,6 +125,53 @@ if ( ! function_exists( 'lvc_price_range' ) ) {
 	}
 }
 
+
+/**
+ * Return the public pricing summary for a villa.
+ *
+ * Mirrors Punta Mita's fallback order so existing imports using the legacy
+ * base_rate_from key continue to work. Empty pricing is honest: it renders
+ * "Rates on request" instead of inventing a nightly amount.
+ *
+ * @param int|null $post_id Villa post ID.
+ * @return array{amount:int,label:string,minimum_stay:int,note:string}
+ */
+if ( ! function_exists( 'lvc_property_rate' ) ) {
+	function lvc_property_rate( $post_id = null ) {
+		$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+		$raw     = function_exists( 'get_field' ) ? get_field( 'nightly_rate_from', $post_id ) : '';
+
+		if ( '' === (string) $raw || null === $raw ) {
+			$raw = get_post_meta( $post_id, 'base_rate_from', true );
+		}
+		if ( '' === (string) $raw || null === $raw ) {
+			$raw = get_post_meta( $post_id, 'nightly_rate_from', true );
+		}
+
+		$amount       = (int) round( (float) preg_replace( '/[^0-9.]/', '', (string) $raw ) );
+		$minimum_raw  = function_exists( 'get_field' ) ? get_field( 'minimum_stay', $post_id ) : '';
+		$minimum_stay = $minimum_raw ? max( 1, (int) $minimum_raw ) : 0;
+		$label        = $amount > 0
+			? 'From approx. $' . number_format_i18n( $amount ) . '/night'
+			: 'Rates on request';
+
+		if ( $amount <= 0 ) {
+			$note = 'Contact us for current rates and availability.';
+		} elseif ( $minimum_stay ) {
+			$note = 'Minimum stay ' . $minimum_stay . ' nights. Rates vary by season and availability.';
+		} else {
+			$note = 'Rates vary by season and availability. Current pricing is confirmed before booking.';
+		}
+
+		return array(
+			'amount'       => $amount,
+			'label'        => $label,
+			'minimum_stay' => $minimum_stay,
+			'note'         => $note,
+		);
+	}
+}
+
 /* ── Off-market properties ───────────────────────────────────────────────
  *
  * A property that is no longer bookable keeps its URL working — existing
@@ -187,3 +234,4 @@ add_filter( 'rank_math/frontend/robots', function ( $robots ) {
 	}
 	return $robots;
 }, 99 );
+
