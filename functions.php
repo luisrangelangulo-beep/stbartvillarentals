@@ -32,6 +32,8 @@ foreach ( array(
 	'inc/sync/rest-sync.php',
 	'inc/seo/schema.php',
 	'inc/nav/mega-menu.php',
+	'inc/home/acf-homepage.php',
+	'inc/security/headers.php',
 	'inc/template-router.php',
 ) as $lvc_relative ) {
 	$lvc_path = LVC_DIR . '/' . $lvc_relative;

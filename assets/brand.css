@@ -1,11 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    ST BARTS VILLA RENTALS — brand skin
    ───────────────────────────────────────────────────────────────────────────
-   Shares Anguilla's design system for now: tulumholidayvillas section rhythm on
-   the rmoceanfrontrentals palette (cool navy ground, blue→cyan accent). This is
-   a sensible default, NOT a committed brand decision — St Barthélemy may want
-   its own palette. To differentiate, change the token block below; the rest of
-   the file reads the tokens, so a re-skin is a colour edit, not a rewrite.
+   Structure follows Anguilla (tulumholidayvillas section rhythm). The palette
+   does NOT: the inherited rmoceanfrontrentals navy/blue-cyan starter was
+   replaced 2026-08-01 with St Barthélemy's own — volcanic basalt ground, salt
+   crust text, salt-pond rose accent. That is now a committed brand decision,
+   not a placeholder. Every colour lives in the token block below; a re-skin is
+   a colour edit, not a rewrite.
 
    Everything below styles the .lvc-* contract in docs/TOKEN_CONTRACT.md.
    No template edits — if something cannot be styled from here, the class hook
@@ -13,25 +14,34 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-	/* ── Ground + surfaces (rmoceanfrontrentals) ───────────────────────── */
-	--lvc-bg:            #070914;
-	--lvc-bg-soft:       #0d1020;
-	--lvc-surface:       #111629;
-	--lvc-surface-2:     #171d33;
+	/* ── Ground + surfaces — VOLCANIC BASALT ───────────────────────────────
+	   St Barthélemy is a volcanic island; the ground tone is warm-black rock,
+	   not the blue-black of the starter palette this replaced. Warm base is
+	   what lets the rose read as material rather than as a UI highlight. */
+	--lvc-bg:            #12100f;
+	--lvc-bg-soft:       #1a1715;
+	--lvc-surface:       #1c1917;
+	--lvc-surface-2:     #262120;
 	--lvc-border:        rgba(255, 255, 255, 0.10);
-	--lvc-border-strong: rgba(90, 167, 255, 0.28);
+	--lvc-border-strong: rgba(194, 129, 140, 0.30);
 
-	/* ── Text ──────────────────────────────────────────────────────────── */
-	--lvc-text:          #f6f8ff;
-	--lvc-text-muted:    #aab3c8;
-	--lvc-text-soft:     #7f8aa6;
+	/* ── Text — SALT CRUST ─────────────────────────────────────────────── */
+	--lvc-text:          #f5f0ea;
+	--lvc-text-muted:    #c3b8b0;
+	--lvc-text-soft:     #9c918b;
 
-	/* ── Accent ────────────────────────────────────────────────────────── */
-	--lvc-accent:        #3b82f6;
-	--lvc-accent-bright: #5aa7ff;
-	--lvc-accent-cyan:   #35d4ff;
-	--lvc-accent-soft:   rgba(59, 130, 246, 0.12);
-	--lvc-gradient:      linear-gradient(135deg, #3b82f6 0%, #5d92ff 55%, #35d4ff 100%);
+	/* ── Accent — SALT-POND ROSE ───────────────────────────────────────────
+	   Anse de Grande Saline is named for the salt ponds behind it, worked
+	   through the island's Swedish period; the crust carries a pink cast.
+	   Chosen over Gustavia's red roofs because Republic already owns
+	   terracotta (#c9805f) — this sits at ~350° hue, unambiguously rose
+	   rather than orange, and is unclaimed across the portfolio.
+	   ~6.2:1 on --lvc-bg, so it clears AA for body text. */
+	--lvc-accent:        #c2818c;
+	--lvc-accent-bright: #d9a0a9;
+	--lvc-accent-deep:   #8a5560;
+	--lvc-accent-soft:   rgba(194, 129, 140, 0.14);
+	--lvc-gradient:      linear-gradient(135deg, #8a5560 0%, #c2818c 55%, #d9a0a9 100%);
 
 	/* ── Type. Tulum's pairing: a display serif against a geometric sans. ─
 	   System stacks, not webfonts — the brand has no font licence loaded yet
@@ -48,7 +58,7 @@
 	--lvc-radius-sm:     10px;
 	--lvc-radius-md:     16px;
 	--lvc-shadow:        0 20px 60px rgba(0, 0, 0, 0.35);
-	--lvc-shadow-glow:   0 0 40px rgba(92, 124, 255, 0.28);
+	--lvc-shadow-glow:   0 0 40px rgba(194, 129, 140, 0.22);
 	--lvc-ease:          cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -127,7 +137,7 @@
 }
 .lvc-btn {
 	background: var(--lvc-gradient);
-	color: #05070f;
+	color: #1a1210;
 	font-weight: 600;
 }
 .lvc-btn:hover { transform: translateY(-1px); box-shadow: var(--lvc-shadow-glow); }
@@ -139,7 +149,7 @@
 .lvc-btn--ghost:hover { border-color: var(--lvc-border-strong); color: var(--lvc-accent-bright); }
 
 :where(a, button, [tabindex]):focus-visible {
-	outline: 2px solid var(--lvc-accent-cyan);
+	outline: 2px solid var(--lvc-accent-deep);
 	outline-offset: 3px;
 }
 
@@ -148,7 +158,7 @@
 	position: sticky;
 	top: 0;
 	z-index: 900;
-	background: rgba(7, 9, 20, 0.94);
+	background: rgba(18, 16, 15, 0.94);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
 	border-bottom: 1px solid var(--lvc-border);
@@ -219,7 +229,7 @@
 	max-width: var(--lvc-max);
 	margin: 0 auto;
 	padding: 2rem var(--lvc-pad) 2.25rem;
-	background: rgba(7, 9, 20, 0.985);
+	background: rgba(18, 16, 15, 0.985);
 	border-top: 1px solid var(--lvc-border);
 	border-bottom: 1px solid var(--lvc-border);
 	box-shadow: var(--lvc-shadow);
@@ -252,7 +262,7 @@
 	transition: background 0.15s;
 }
 .lvc-mega__item:hover { background: rgba(255, 255, 255, 0.05); }
-.lvc-mega__name { font-size: 0.83rem; color: rgba(246, 248, 255, 0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lvc-mega__name { font-size: 0.83rem; color: rgba(245, 240, 234, 0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lvc-mega__item:hover .lvc-mega__name { color: var(--lvc-text); }
 .lvc-mega__count { font-size: 0.63rem; color: var(--lvc-text-soft); font-variant-numeric: tabular-nums; flex-shrink: 0; }
 .lvc-mega__col--compact .lvc-mega__list { flex-direction: row; flex-wrap: wrap; gap: 0.5rem; }
@@ -263,7 +273,7 @@
 	border: 1px solid var(--lvc-border);
 	border-radius: 999px;
 	font-size: 0.74rem;
-	color: rgba(246, 248, 255, 0.82);
+	color: rgba(245, 240, 234, 0.82);
 	text-decoration: none;
 	font-variant-numeric: tabular-nums;
 	transition: border-color 0.15s, color 0.15s, background 0.15s;
@@ -286,7 +296,7 @@
 .lvc-single__scrim {
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(180deg, rgba(7, 9, 20, 0.15) 0%, rgba(7, 9, 20, 0.55) 55%, rgba(7, 9, 20, 0.96) 100%);
+	background: linear-gradient(180deg, rgba(18, 16, 15, 0.15) 0%, rgba(18, 16, 15, 0.55) 55%, rgba(18, 16, 15, 0.96) 100%);
 }
 .lvc-single__hero > *:not(img):not(.lvc-single__scrim) { position: relative; z-index: 2; }
 
@@ -365,14 +375,14 @@
 	font-size: 1.5rem;
 	line-height: 1;
 	color: var(--lvc-text);
-	background: rgba(7, 9, 20, 0.75);
+	background: rgba(18, 16, 15, 0.75);
 	border: 1px solid var(--lvc-border);
 	border-radius: 50%;
 	cursor: pointer;
 	backdrop-filter: blur(6px);
 	transition: background 0.2s, border-color 0.2s, opacity 0.2s;
 }
-.lvc-slider__nav:hover { background: var(--lvc-accent); border-color: var(--lvc-accent); color: #05070f; }
+.lvc-slider__nav:hover { background: var(--lvc-accent); border-color: var(--lvc-accent); color: #1a1210; }
 .lvc-slider__nav:disabled { opacity: 0.3; cursor: default; }
 .lvc-slider__nav--prev { left: 1rem; }
 .lvc-slider__nav--next { right: 1rem; }
@@ -597,7 +607,7 @@
 		display: flex; align-items: center; justify-content: space-between; gap: 1rem;
 		position: fixed; left: 0; right: 0; bottom: 0; z-index: 940;
 		padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
-		background: rgba(7, 9, 20, 0.96); border-top: 1px solid var(--lvc-border-strong);
+		background: rgba(18, 16, 15, 0.96); border-top: 1px solid var(--lvc-border-strong);
 		backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 	}
 	.lvc-single__mobilebar-name { font-family: var(--lvc-font-display); font-size: 0.95rem; color: var(--lvc-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
