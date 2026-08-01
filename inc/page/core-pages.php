@@ -33,6 +33,17 @@ add_action( 'init', static function () {
 	$events  = 'st-barts-villas-for-events';
 
 	$pages = array(
+		// Front page and posts page. Neither needs a template — front-page.php
+		// and home.php win the hierarchy on their own — but both must EXIST as
+		// pages for the routing below to work, and the front page additionally
+		// hosts the Homepage ACF group. With page_on_front unset, that group has
+		// nowhere to live and the homepage hero can never be set.
+		'home' => array(
+			'title' => 'Home',
+		),
+		'magazine' => array(
+			'title' => 'Magazine',
+		),
 		'about-us' => array(
 			'title'    => 'About Us',
 			'template' => 'page-templates/about.php',
@@ -76,7 +87,9 @@ add_action( 'init', static function () {
 	foreach ( $pages as $slug => $page ) {
 		$existing = get_page_by_path( $slug, OBJECT, 'page' );
 		if ( $existing instanceof WP_Post ) {
-			if ( get_page_template_slug( $existing->ID ) !== $page['template'] ) {
+			// 'home' and 'magazine' carry no template on purpose — front-page.php
+			// and home.php win the hierarchy without one.
+			if ( isset( $page['template'] ) && get_page_template_slug( $existing->ID ) !== $page['template'] ) {
 				update_post_meta( $existing->ID, '_wp_page_template', $page['template'] );
 			}
 			if ( in_array( $existing->post_status, array( 'draft', 'pending' ), true ) ) {
@@ -95,15 +108,39 @@ add_action( 'init', static function () {
 				'post_title'   => $page['title'],
 				'post_name'    => $slug,
 				'post_content' => isset( $page['content'] ) ? $page['content'] : '',
-				'meta_input'   => array(
-					'_wp_page_template' => $page['template'],
-				),
+				'meta_input'   => isset( $page['template'] )
+					? array( '_wp_page_template' => $page['template'] )
+					: array(),
 			),
 			true
 		);
 
 		if ( ! is_wp_error( $page_id ) && 'privacy-policy' === $slug && ! get_option( 'wp_page_for_privacy_policy' ) ) {
 			update_option( 'wp_page_for_privacy_policy', (int) $page_id );
+		}
+	}
+
+	/* ── Front-page / posts-page routing ──────────────────────────────────
+	 * Only runs while the site is still on the default "your latest posts"
+	 * setting. Once a front page is chosen — here or by hand — this never
+	 * touches it again, so an editor's choice is never overwritten.
+	 *
+	 * Both assignments matter beyond tidiness:
+	 *  - page_on_front is where the Homepage ACF group lives. Unset, there is
+	 *    nowhere to store the homepage hero and front-page.php renders without
+	 *    one, which reads as a design bug rather than a missing setting.
+	 *  - page_for_posts is what gives home.php (the magazine index) a URL at
+	 *    all. Without it the template is dead code: front-page.php wins the
+	 *    front page, and nothing else routes to home.php.
+	 */
+	if ( 'posts' === get_option( 'show_on_front' ) && ! (int) get_option( 'page_on_front' ) ) {
+		$front = get_page_by_path( 'home', OBJECT, 'page' );
+		$blog  = get_page_by_path( 'magazine', OBJECT, 'page' );
+
+		if ( $front instanceof WP_Post && $blog instanceof WP_Post ) {
+			update_option( 'page_on_front', (int) $front->ID );
+			update_option( 'page_for_posts', (int) $blog->ID );
+			update_option( 'show_on_front', 'page' );
 		}
 	}
 }, 30 );
