@@ -342,6 +342,9 @@ if ( ! function_exists( 'lvc_term_should_noindex' ) ) {
 		if ( ! $term instanceof WP_Term ) {
 			return false;
 		}
+		if ( in_array( $term->taxonomy, (array) lvc_config( 'noindex_taxonomies', array() ), true ) ) {
+			return true;
+		}
 		if ( (int) $term->count < (int) lvc_config( 'min_index_count', 3 ) ) {
 			return true;
 		}
@@ -398,6 +401,9 @@ if ( lvc_config( 'noindex_thin_terms', true ) ) {
 		}
 		if ( ! in_array( $object->taxonomy, array_keys( (array) lvc_config( 'taxonomies', array() ) ), true ) ) {
 			return $url;
+		}
+		if ( in_array( $object->taxonomy, (array) lvc_config( 'noindex_taxonomies', array() ), true ) ) {
+			return false;
 		}
 		if ( (int) $object->count < (int) lvc_config( 'min_index_count', 3 ) ) {
 			return false;

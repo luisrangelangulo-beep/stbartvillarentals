@@ -115,6 +115,20 @@ if ( ! function_exists( 'lvc_config' ) ) {
 				// read as a doorway page. Raising this is safe; dropping it to 1
 				// re-opens the gap it exists to close.
 				'min_index_count'    => 3,
+				// Taxonomies whose term archives are DATA, not landing pages —
+				// noindexed wholesale and kept out of the XML sitemap regardless
+				// of how many properties they hold.
+				//
+				// `amenity` qualifies: "villas with air conditioning" is near-zero
+				// commercial intent, and 18–26 such archives are near-duplicates
+				// of each other and of the main archive. That is the exact shape
+				// that left 63 of Punta Mita's pages "crawled, not indexed" —
+				// weak URLs spending the crawl budget the villa pages need.
+				//
+				// `beach_access` deliberately stays indexable: beachfront vs
+				// oceanfront is high-intent and is the distinction the brand
+				// makes precisely. `area` is core geography.
+				'noindex_taxonomies' => array( 'amenity' ),
 				// Taxonomy mega menu. Each entry becomes a column of term links in
 				// the header panel, giving every taxonomy archive an inbound link
 				// from every page — without one they are orphans that cannot rank.
