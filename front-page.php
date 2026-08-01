@@ -19,10 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 // DATA
 // ═══════════════════════════════════════════════════════════════════════════
 
+// Hero: the Homepage ACF field, or nothing. Anguilla hardcoded one of its own
+// villa photographs from the rmof CDN as the fallback here; carried across that
+// would have published another island's property as this site's hero image.
+// Sections guard on empty and fall back to a dark surface, which is the honest
+// state until a St Barts hero is set on the front page.
 $hero_image = (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) );
-if ( '' === $hero_image ) {
-	$hero_image = 'https://images.rmoceanfrontrentals.com/kandara-villa-anguilla/01.webp';
-}
 
 $villa_count = (int) wp_count_posts( 'villa' )->publish;
 $archive_url = get_post_type_archive_link( 'villa' );
