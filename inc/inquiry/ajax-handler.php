@@ -11,8 +11,9 @@
  *   _wpnonce     = wp_create_nonce( <inquiry_action> )
  *   website      = ""   (honeypot — must stay empty)
  *   lvc_ts       = <timestamp at render>  (time-trap)
- * Plus: name, email, message (required); optional phone, property_name,
- * source_url, inquiry_type ('guest'|'owner'), and any of the extra fields below.
+ * Plus: name, email, checkin, checkout, guests (required); optional phone,
+ * message, budget, property_name, source_url, inquiry_type ('guest'|'owner'),
+ * and any of the extra fields below.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +25,28 @@ add_action( 'init', function () {
 	add_action( 'wp_ajax_' . $action, 'lvc_handle_inquiry' );
 	add_action( 'wp_ajax_nopriv_' . $action, 'lvc_handle_inquiry' );
 } );
+
+if ( ! function_exists( 'lvc_turnstile_field' ) ) {
+	/**
+	 * Cloudflare Turnstile widget — rendered inside the inquiry form, right
+	 * before the submit button. The site key is public by design; the SECRET
+	 * lives in the lvc_turnstile_secret option (DB only, never in the repo).
+	 * When the secret is absent the widget is not rendered and the server
+	 * check is skipped, so forms keep working where Turnstile isn't
+	 * configured. FormData(form) picks up cf-turnstile-response automatically.
+	 */
+	function lvc_turnstile_field() {
+		if ( '' === trim( (string) get_option( 'lvc_turnstile_secret' ) ) ) {
+			return;
+		}
+		static $script_printed = false;
+		echo '<div class="cf-turnstile" data-sitekey="0x4AAAAAAD9OWyEgjF9Jz8os" data-theme="dark" style="margin:0 0 1rem;"></div>';
+		if ( ! $script_printed ) {
+			echo '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
+			$script_printed = true;
+		}
+	}
+}
 
 if ( ! function_exists( 'lvc_disposable_domains' ) ) {
 	function lvc_disposable_domains() {
@@ -60,6 +83,38 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 			}
 		}
 
+		// Cloudflare Turnstile — human verification. Only enforced when a
+		// secret is configured; lvc_turnstile_field() likewise only renders
+		// the widget then, so the two sides can never disagree. Fails OPEN
+		// on Cloudflare network errors: a lost real lead costs more than the
+		// rare spam the other layers would miss.
+		$ts_secret = trim( (string) get_option( 'lvc_turnstile_secret' ) );
+		if ( '' !== $ts_secret ) {
+			$ts_token = isset( $_POST['cf-turnstile-response'] ) ? sanitize_text_field( wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
+			$ts_ok    = false;
+			if ( '' !== $ts_token ) {
+				$ts_resp = wp_remote_post(
+					'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+					array(
+						'timeout' => 8,
+						'body'    => array(
+							'secret'   => $ts_secret,
+							'response' => $ts_token,
+						),
+					)
+				);
+				if ( is_wp_error( $ts_resp ) ) {
+					$ts_ok = true; // Cloudflare unreachable — fail open.
+				} else {
+					$ts_data = json_decode( wp_remote_retrieve_body( $ts_resp ), true );
+					$ts_ok   = ! empty( $ts_data['success'] );
+				}
+			}
+			if ( ! $ts_ok ) {
+				wp_send_json_error( array( 'message' => 'Human verification failed. Please refresh the page and try again.' ), 403 );
+			}
+		}
+
 		// Per-IP rate limit.
 		$rate_key   = 'lvc_inq_' . md5( (string) ( $_SERVER['REMOTE_ADDR'] ?? 'unknown' ) );
 		$rate_count = (int) get_transient( $rate_key );
@@ -68,6 +123,11 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 		}
 		set_transient( $rate_key, $rate_count + 1, HOUR_IN_SECONDS );
 
+		// Client-generated idempotency id (theme.js): a retry of the SAME
+		// browser submission carries the same uid, so a lost response can't
+		// turn one lead into two.
+		$uid = isset( $_POST['lvc_uid'] ) ? substr( preg_replace( '/[^a-zA-Z0-9\-]/', '', (string) wp_unslash( $_POST['lvc_uid'] ) ), 0, 64 ) : '';
+
 		$name        = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
 		$email       = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
 		$phone       = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
@@ -75,10 +135,14 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 		$property    = isset( $_POST['property_name'] ) ? sanitize_text_field( wp_unslash( $_POST['property_name'] ) ) : '';
 		$source_url  = isset( $_POST['source_url'] ) ? esc_url_raw( wp_unslash( $_POST['source_url'] ) ) : '';
 		$type        = isset( $_POST['inquiry_type'] ) ? sanitize_key( wp_unslash( $_POST['inquiry_type'] ) ) : 'guest';
+		$checkin     = isset( $_POST['checkin'] ) ? sanitize_text_field( wp_unslash( $_POST['checkin'] ) ) : '';
+		$checkout    = isset( $_POST['checkout'] ) ? sanitize_text_field( wp_unslash( $_POST['checkout'] ) ) : '';
+		$guests      = isset( $_POST['guests'] ) ? absint( $_POST['guests'] ) : 0;
+		$budget      = isset( $_POST['budget'] ) ? sanitize_text_field( wp_unslash( $_POST['budget'] ) ) : '';
 
 		// Generic capture of any known optional fields, in a stable order.
 		$extra_keys = apply_filters( 'lvc_inquiry_extra_fields', array(
-			'destination', 'area', 'checkin', 'checkout', 'guests', 'bedrooms', 'preferred_area', 'listing_url',
+			'destination', 'area', 'checkin', 'checkout', 'guests', 'budget', 'bedrooms', 'preferred_area', 'listing_url', 'property_id',
 		) );
 		$extra = array();
 		foreach ( (array) $extra_keys as $k ) {
@@ -87,8 +151,29 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 			}
 		}
 
-		if ( '' === $name || '' === $email || '' === $message ) {
-			wp_send_json_error( array( 'message' => 'Please fill in name, email, and message.' ), 400 );
+		// Dates and guest count matter far more for qualifying a lead than a
+		// free-text message, so message is optional; check-in/check-out/
+		// guests are not (previously only name/email/message were required,
+		// so leads routinely arrived with no dates, unquotable on first
+		// touch). Owner inquiries don't book a stay, so they're exempt.
+		$is_owner = ( 'owner' === $type );
+		if ( ! $is_owner ) {
+			if ( '' === $name || '' === $email || '' === $checkin || '' === $checkout || $guests < 1 ) {
+				wp_send_json_error( array( 'message' => 'Please fill in your name, email, dates, and guest count.' ), 400 );
+			}
+			$checkin_dt  = DateTime::createFromFormat( 'Y-m-d', $checkin );
+			$checkout_dt = DateTime::createFromFormat( 'Y-m-d', $checkout );
+			if ( ! $checkin_dt || ! $checkout_dt ) {
+				wp_send_json_error( array( 'message' => 'Please enter valid dates.' ), 400 );
+			}
+			if ( $checkout_dt <= $checkin_dt ) {
+				wp_send_json_error( array( 'message' => 'Check-out must be after check-in.' ), 400 );
+			}
+			if ( $checkin_dt < new DateTime( 'today' ) ) {
+				wp_send_json_error( array( 'message' => 'Check-in cannot be in the past.' ), 400 );
+			}
+		} elseif ( '' === $name || '' === $email ) {
+			wp_send_json_error( array( 'message' => 'Please fill in your name and email.' ), 400 );
 		}
 		if ( ! is_email( $email ) ) {
 			wp_send_json_error( array( 'message' => 'Please enter a valid email address.' ), 400 );
@@ -103,7 +188,6 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 			$property = trim( lvc_config( 'brand_name', '' ) . ' Inquiry' );
 		}
 
-		$is_owner = ( 'owner' === $type );
 		$support  = (string) lvc_config( 'support_email', '' );
 		$owner    = (string) lvc_config( 'owner_email', '' );
 		$owner    = '' !== $owner ? $owner : $support;
@@ -125,7 +209,7 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 		if ( $source_url ) {
 			$body .= "Source:  {$source_url}\n";
 		}
-		$body .= "\nMessage:\n{$message}\n";
+		$body .= "\nMessage:\n" . ( $message ?: '(none)' ) . "\n";
 		$body .= "\n---\nIP: " . ( $_SERVER['REMOTE_ADDR'] ?? '-' ) . "\n";
 
 		$headers = array(
@@ -137,13 +221,112 @@ if ( ! function_exists( 'lvc_handle_inquiry' ) ) {
 			$headers[] = 'Cc: ' . $support;
 		}
 
-		$sent = wp_mail( $recipient, $subject, $body, $headers );
-
-		if ( $sent ) {
-			do_action( 'lvc_inquiry_submitted', compact( 'name', 'email', 'phone', 'property', 'type' ) );
-			wp_send_json_success( array( 'message' => 'Thank you. We will respond ' . lvc_config( 'response_time', 'soon' ) . '.' ) );
+		// Persist BEFORE attempting delivery — these leads are worth
+		// $30k-45k each; previously the inbox was the only record, so an
+		// SMTP outage, spam-folder landing, or throttling meant the lead
+		// was gone for good.
+		$inquiry_post_id = 0;
+		if ( function_exists( 'lvc_save_inquiry' ) ) {
+			if ( '' !== $uid ) {
+				$dupe = get_posts( array(
+					'post_type'      => 'inquiry',
+					'post_status'    => 'any',
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+					'meta_key'       => 'uid',
+					'meta_value'     => $uid,
+					'date_query'     => array( array( 'after' => '-1 day' ) ),
+					'no_found_rows'  => true,
+				) );
+				if ( $dupe ) {
+					$ref = 'INQ-' . (int) $dupe[0];
+					wp_send_json_success( array(
+						'message'   => 'Thank you — your request is already safely received (reference ' . $ref . '). We will respond ' . lvc_config( 'response_time', 'soon' ) . '.',
+						'reference' => $ref,
+					) );
+				}
+			}
+			$inquiry_post_id = lvc_save_inquiry( array(
+				'type'         => $type,
+				'name'         => $name,
+				'email'        => $email,
+				'phone'        => $phone,
+				'checkin'      => $checkin,
+				'checkout'     => $checkout,
+				'guests'       => $guests,
+				'budget'       => $budget,
+				'message'      => $message,
+				'property'     => $property,
+				'source_url'   => $source_url,
+				'extra'        => $extra,
+				'ip'           => $_SERVER['REMOTE_ADDR'] ?? '',
+				'site'         => (string) lvc_config( 'brand_name', home_url() ),
+				'uid'          => $uid,
+			) );
 		}
 
-		wp_send_json_error( array( 'message' => 'Email delivery failed. Please try again or message us on WhatsApp.' ), 500 );
+		$sent = wp_mail( $recipient, $subject, $body, $headers );
+
+		if ( $inquiry_post_id && ! $sent ) {
+			update_post_meta( $inquiry_post_id, 'mail_failed', 1 );
+			lvc_queue_inquiry_mail_retry( $inquiry_post_id, $recipient, $subject, $body, $headers );
+		}
+
+		// The lead is captured once it is stored OR delivered. A stored lead
+		// with failed email is a SUCCESS for the guest — telling them to
+		// resubmit (the old behaviour) just manufactured duplicates while the
+		// first lead already sat in the pipeline. Only both channels failing
+		// is a real error.
+		if ( $inquiry_post_id || $sent ) {
+			do_action( 'lvc_inquiry_submitted', compact( 'name', 'email', 'phone', 'property', 'type', 'inquiry_post_id' ) );
+			$msg = 'Thank you. We will respond ' . lvc_config( 'response_time', 'soon' ) . '.';
+			$ref = '';
+			if ( $inquiry_post_id ) {
+				$ref = 'INQ-' . (int) $inquiry_post_id;
+				$msg = 'Thank you — your request is safely received (reference ' . $ref . '). We will respond ' . lvc_config( 'response_time', 'soon' ) . '.';
+			}
+			wp_send_json_success( array( 'message' => $msg, 'reference' => $ref ) );
+		}
+
+		wp_send_json_error( array( 'message' => 'We could not process your request just now. Please message us on WhatsApp so we can help you right away.' ), 500 );
 	}
 }
+
+if ( ! function_exists( 'lvc_queue_inquiry_mail_retry' ) ) {
+	/**
+	 * Failed notification emails retry from cron with backoff (5m → 30m → 2h).
+	 * The guest is never asked to resubmit — the lead is already stored; only
+	 * the internal notification is late.
+	 */
+	function lvc_queue_inquiry_mail_retry( $post_id, $recipient, $subject, $body, $headers ) {
+		update_post_meta( $post_id, 'mail_retry', array(
+			'recipient' => $recipient,
+			'subject'   => $subject,
+			'body'      => $body,
+			'headers'   => $headers,
+			'attempts'  => 0,
+		) );
+		wp_schedule_single_event( time() + 5 * MINUTE_IN_SECONDS, 'lvc_inquiry_mail_retry', array( (int) $post_id ) );
+	}
+}
+
+add_action( 'lvc_inquiry_mail_retry', function ( $post_id ) {
+	$retry = get_post_meta( $post_id, 'mail_retry', true );
+	if ( ! is_array( $retry ) || empty( $retry['recipient'] ) ) {
+		return;
+	}
+	if ( wp_mail( $retry['recipient'], $retry['subject'], $retry['body'], (array) $retry['headers'] ) ) {
+		update_post_meta( $post_id, 'mail_failed', 0 );
+		delete_post_meta( $post_id, 'mail_retry' );
+		return;
+	}
+	$retry['attempts'] = (int) $retry['attempts'] + 1;
+	$delays            = array( 1 => 30 * MINUTE_IN_SECONDS, 2 => 2 * HOUR_IN_SECONDS );
+	if ( isset( $delays[ $retry['attempts'] ] ) ) {
+		update_post_meta( $post_id, 'mail_retry', $retry );
+		wp_schedule_single_event( time() + $delays[ $retry['attempts'] ], 'lvc_inquiry_mail_retry', array( (int) $post_id ) );
+	} else {
+		// Retries exhausted — the admin list still shows the failure flag.
+		delete_post_meta( $post_id, 'mail_retry' );
+	}
+} );
