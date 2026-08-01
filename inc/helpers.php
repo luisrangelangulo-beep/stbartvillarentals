@@ -171,3 +171,30 @@ if ( ! function_exists( 'lvc_brand' ) ) {
 	}
 }
 
+/**
+ * Term count for a taxonomy that may not be registered on this site.
+ *
+ * The taxonomy list in theme-config.php is per-brand, so templates cannot assume
+ * any given taxonomy exists — single-island sites drop `destination` and let
+ * `area` carry the geography. wp_count_terms() returns a WP_Error in that case,
+ * and `(int) $wp_error` raises "Object of class WP_Error could not be converted
+ * to int" on every render. Callers want a number they can compare, so return 0.
+ *
+ * Counting a taxonomy that does not exist is not an error worth surfacing: the
+ * stats that use it are decorative and self-hide at zero.
+ */
+if ( ! function_exists( 'lvc_count_terms_safe' ) ) {
+	function lvc_count_terms_safe( $taxonomy, $hide_empty = false ) {
+		if ( ! taxonomy_exists( $taxonomy ) ) {
+			return 0;
+		}
+		$count = wp_count_terms(
+			array(
+				'taxonomy'   => $taxonomy,
+				'hide_empty' => (bool) $hide_empty,
+			)
+		);
+		return is_wp_error( $count ) ? 0 : (int) $count;
+	}
+}
+

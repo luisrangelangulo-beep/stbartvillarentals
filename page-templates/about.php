@@ -8,9 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$lvc_cpt    = lvc_config( 'cpt', 'villa' );
-$lvc_count  = (int) ( wp_count_posts( $lvc_cpt )->publish ?? 0 );
-$lvc_dests  = (int) wp_count_terms( array( 'taxonomy' => 'destination', 'hide_empty' => false ) );
+$lvc_cpt   = lvc_config( 'cpt', 'villa' );
+$lvc_count = (int) ( wp_count_posts( $lvc_cpt )->publish ?? 0 );
+
+// `destination` is optional in theme-config.php: single-island sites like this
+// one let `area` carry the geography and never register it. wp_count_terms()
+// returns a WP_Error for an unregistered taxonomy, and casting that to int warns
+// on every render. 0 is the honest answer, and the stat below self-hides at < 2.
+$lvc_dests = lvc_count_terms_safe( 'destination' );
 
 $lvc_principles = array(
 	array( 'Local specialists', 'We focus on the communities, the villas, and the practical details that make a stay — not a generic global catalogue.' ),
