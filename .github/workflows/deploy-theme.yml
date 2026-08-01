@@ -122,11 +122,12 @@ jobs:
 
             # Only meaningful once the child theme is active; harmless before.
             WP_PATH="/home/$CPANEL_USER/public_html"
-            WP_CLI="/home/$CPANEL_USER/bin/wp"
             if command -v wp >/dev/null 2>&1; then
               WP="wp"
-            elif [ -f "$WP_CLI" ]; then
-              WP="$WP_CLI"
+            elif [ -x "/usr/local/bin/wp" ]; then
+              WP="/usr/local/bin/wp"
+            elif [ -x "/home/$CPANEL_USER/bin/wp" ]; then
+              WP="/home/$CPANEL_USER/bin/wp"
             else
               WP=""
             fi
@@ -134,15 +135,40 @@ jobs:
               ACTIVE=$($WP --path="$WP_PATH" option get stylesheet 2>/dev/null || echo "")
               echo "Active stylesheet on server: ${ACTIVE:-unknown}"
               if [ "$ACTIVE" = "$THEME_DIR" ]; then
-                echo "Child theme is ACTIVE — flushing rewrites and caches."
+                echo "Child theme is ACTIVE — flushing rewrites and purging caches."
                 $WP --path="$WP_PATH" rewrite flush --hard || true
+
+                # `wp cache flush` clears the OBJECT cache only. WP Rocket's page
+                # cache is a separate store and survives it — which is how a
+                # deploy lands on disk while visitors keep getting the old HTML.
+                # That happened on 2026-08-01: the ported homepage looked like it
+                # had never deployed until Rocket was purged by hand.
+                $WP --path="$WP_PATH" eval '
+                  if ( function_exists( "rocket_clean_domain" ) ) {
+                      rocket_clean_domain();
+                      echo "rocket_clean_domain: OK\n";
+                  } else {
+                      echo "rocket_clean_domain: WP Rocket inactive, skipped\n";
+                  }
+                  if ( function_exists( "rocket_clean_minify" ) ) {
+                      rocket_clean_minify();
+                      echo "rocket_clean_minify: OK\n";
+                  }
+                ' || true
+
                 $WP --path="$WP_PATH" transient delete --all || true
                 $WP --path="$WP_PATH" cache flush || true
+
+                # Filesystem sweep AFTER the API purge, never instead of it —
+                # the API call is what lets the plugins rebuild their own state.
+                rm -rf "$WP_PATH/wp-content/cache/"* || true
+                echo "Filesystem cache directory cleared."
               else
                 echo "Child theme is INACTIVE — skipping flush (nothing user-facing changed)."
               fi
             else
-              echo "WP-CLI not found — skipping flush."
+              echo "::warning::WP-CLI not found — caches NOT purged. Visitors may be served stale HTML until the cache expires."
+              rm -rf "$WP_PATH/wp-content/cache/"* || true
             fi
 
             echo "Deploy complete."
