@@ -414,3 +414,55 @@ if ( lvc_config( 'noindex_thin_terms', true ) ) {
 		return $url;
 	}, 99, 3 );
 }
+
+/* ── A WP Page is never an Article. ─────────────────────────────────────────
+ *
+ * Rank Math's default rich snippet for pages is "article", so every static page
+ * inherits an Article node plus an author Person. Wrong entity for a request,
+ * contact, about or legal page, and it asks Search Console to validate a
+ * headline, date and author none of them have.
+ *
+ * Applied in code rather than by setting pt_page_default_rich_snippet to "off":
+ * that switch removes Rank Math's ENTIRE graph for the post type — Organization
+ * and WebSite along with the unwanted node — and it lives in a DB option the
+ * repo cannot see. Filtering the finished graph is version-proof and reviewable.
+ *
+ * ⚠️ Matched narrowly on purpose. An earlier version of this idea dropped ANY
+ * node whose @type contained "Person", which is safe only while the brand is
+ * typed Organization. With Rank Math's default knowledgegraph_type=person the
+ * brand entity itself is ["Organization","Person"] — a broad match deletes the
+ * brand. So: drop article-shaped nodes, and drop Person ONLY when its @id is an
+ * author archive. Posts are `post`, not `page`, so their Article stays.
+ */
+add_filter( 'rank_math/json_ld', function ( $data ) {
+	if ( ! is_page() || ! is_array( $data ) ) {
+		return $data;
+	}
+
+	$article_types = array( 'Article', 'BlogPosting', 'NewsArticle' );
+
+	foreach ( $data as $key => $node ) {
+		if ( ! is_array( $node ) ) {
+			continue;
+		}
+		$types = (array) ( isset( $node['@type'] ) ? $node['@type'] : array() );
+
+		if ( array_intersect( $article_types, $types ) ) {
+			unset( $data[ $key ] );
+			continue;
+		}
+
+		$id = isset( $node['@id'] ) ? (string) $node['@id'] : '';
+		if ( in_array( 'Person', $types, true ) && false !== strpos( $id, '/author/' ) ) {
+			unset( $data[ $key ] );
+			continue;
+		}
+
+		// Drop author references left dangling on surviving nodes.
+		if ( isset( $data[ $key ]['author'] ) ) {
+			unset( $data[ $key ]['author'] );
+		}
+	}
+
+	return $data;
+}, 99 );
