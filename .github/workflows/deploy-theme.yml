@@ -2,16 +2,11 @@ name: Deploy Theme
 
 # Manual-only, triggered via "Run workflow", never on push.
 #
-# READ THIS BEFORE ACTIVATING ANYTHING. stbartvillarentals.com currently serves
-# a DIFFERENT project — the "Lighthouse Network" clinic site, 15 published pages
-# on the same WordPress install. It is blog_public=0 so Google cannot see it,
-# but it is real work and it is still there.
+# The clinic-site warning that used to live here is OBSOLETE as of 2026-08-01.
+# The Lighthouse Network content was trashed, the child theme is ACTIVE, and the
+# site is live with villa inventory. Deploying now changes what visitors see.
 #
-# Deploying is SAFE: the child theme lands in its own directory beside the
-# active `hello-elementor` parent, and nothing renders from it until someone
-# switches the active theme in WP Admin. ACTIVATING is what replaces the clinic
-# site's front end. Do not activate until the clinic project has been moved or
-# retired and that call has been made explicitly.
+# blog_public is 1, so this is also indexed.
 on:
   workflow_dispatch:
 
@@ -161,14 +156,32 @@ jobs:
 
                 # Filesystem sweep AFTER the API purge, never instead of it —
                 # the API call is what lets the plugins rebuild their own state.
+                #
+                # ⚠️ Clear the CONTENTS, then put the directories back. Deleting
+                # wp-content/cache/wp-rocket/ itself is not a harder purge, it is
+                # a broken one: advanced-cache.php sees the missing directory,
+                # defines WP_ROCKET_ADVANCED_CACHE_PROBLEM and bails on both
+                # serving AND writing. Nothing on the front end recreates it, so
+                # page caching stays dead silently — the site still serves, just
+                # uncached, which reads as "slow hosting".
+                #
+                # This is not theoretical: an earlier version of this step ran a
+                # bare `rm -rf cache/*` and killed page caching on both St Barts
+                # and Cayman on 2026-08-01. Zero cache files were written across
+                # real requests until the directories were restored by hand.
                 rm -rf "$WP_PATH/wp-content/cache/"* || true
-                echo "Filesystem cache directory cleared."
+                mkdir -p \
+                  "$WP_PATH/wp-content/cache/wp-rocket" \
+                  "$WP_PATH/wp-content/cache/min" \
+                  "$WP_PATH/wp-content/cache/busting" || true
+                echo "Filesystem cache cleared; cache directories restored."
               else
                 echo "Child theme is INACTIVE — skipping flush (nothing user-facing changed)."
               fi
             else
               echo "::warning::WP-CLI not found — caches NOT purged. Visitors may be served stale HTML until the cache expires."
               rm -rf "$WP_PATH/wp-content/cache/"* || true
+              mkdir -p "$WP_PATH/wp-content/cache/wp-rocket" "$WP_PATH/wp-content/cache/min" "$WP_PATH/wp-content/cache/busting" || true
             fi
 
             echo "Deploy complete."
