@@ -1,12 +1,17 @@
 <?php
 /**
- * Anguilla Beach Luxury Villas — Homepage.
+ * St Barts Villa Rentals — Homepage.
  *
- * Cloned from tulumholidayvillas' front-page.php (v3.0 eco-luxury dark theme)
- * per the clone-don't-rebuild rule: same sections, markup and CSS, recolored
- * to the Shoal Bay palette and re-pointed at this site's data model
- * (villa CPT + area/bedrooms taxonomies; no destination/beach_access here).
- * Class prefix lvc- replaces thvh-.
+ * Ported from anguilla-repo 2026-08-01, which had itself cloned
+ * tulumholidayvillas' front-page.php (v3.0 dark theme): same sections, markup
+ * and CSS, recolored to the St Barts salt-rose palette and pointed at this
+ * site's data model (villa CPT + area/bedrooms taxonomies).
+ * Class prefix lvc- replaces Anguilla's ablv-.
+ *
+ * Place names read lvc_config('region') rather than being hardcoded, so this
+ * file ports again without another find-and-replace. The two lines that could
+ * not be parameterised — the hero's named bays and the direct-booking brand —
+ * were rewritten for St Barts rather than left as another island's copy.
  *
  * @package StBartsVillaRentals
  */
