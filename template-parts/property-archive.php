@@ -85,7 +85,9 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 }
 ?>
 
+<?php if ( '' !== (string) $hero_image ) : ?>
 <link rel="preload" as="image" href="<?php echo esc_url( $hero_image ); ?>" fetchpriority="high">
+<?php endif; ?>
 
 <style>
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•

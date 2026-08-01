@@ -67,7 +67,7 @@ while ( have_posts() ) :
 	}
 
 	// Archive crumb — resolved, never hardcoded (THV breadcrumb bug fix).
-	$lvc_archive_url = get_post_type_archive_link( lvc_config( 'cpt', 'villa' ) );
+	$lvc_archive_url = lvc_archive_url();
 
 	// Facts. THV: bedrooms/bathrooms/max_guests → theme-core names.
 	$lvc_beds   = lvc_field( 'bed_count', $lvc_id );
@@ -196,7 +196,9 @@ while ( have_posts() ) :
 	?>
 
 <?php if ( $lvc_hero ) : ?>
+<?php if ( '' !== (string) $lvc_hero ) : ?>
 <link rel="preload" as="image" href="<?php echo esc_url( $lvc_hero ); ?>" fetchpriority="high">
+<?php endif; ?>
 <?php endif; ?>
 
 <style>

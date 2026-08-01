@@ -128,7 +128,9 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 get_header();
 ?>
 
+<?php if ( '' !== (string) $lvc_hero_bg ) : ?>
 <link rel="preload" as="image" href="<?php echo esc_url( $lvc_hero_bg ); ?>" fetchpriority="high">
+<?php endif; ?>
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
