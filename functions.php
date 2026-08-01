@@ -34,6 +34,7 @@ foreach ( array(
 	'inc/nav/mega-menu.php',
 	'inc/home/acf-homepage.php',
 	'inc/page/core-pages.php',
+	'inc/post/acf-post.php',
 	'inc/security/headers.php',
 	'inc/template-router.php',
 ) as $lvc_relative ) {
@@ -52,6 +53,23 @@ add_action( 'wp_enqueue_scripts', function () {
 
 	if ( file_exists( LVC_DIR . '/assets/brand.css' ) ) {
 		wp_enqueue_style( 'lvc-brand', LVC_URI . '/assets/brand.css', array( 'hello-elementor' ), (string) filemtime( LVC_DIR . '/assets/brand.css' ) );
+	}
+
+	// Homepage layout lives in a versioned file rather than inline in the
+	// template: on Anguilla, LiteSpeed/QUIC.cloud stripped a middle block of
+	// the inline CSS and left the whole villa inventory rendering as unstyled
+	// text. A real stylesheet is not subject to that rewriting.
+	if ( is_front_page() && file_exists( LVC_DIR . '/assets/homepage.css' ) ) {
+		$lvc_homepage_deps = file_exists( LVC_DIR . '/assets/brand.css' )
+			? array( 'lvc-brand' )
+			: array( 'hello-elementor' );
+
+		wp_enqueue_style(
+			'lvc-homepage',
+			LVC_URI . '/assets/homepage.css',
+			$lvc_homepage_deps,
+			(string) filemtime( LVC_DIR . '/assets/homepage.css' )
+		);
 	}
 }, 20 );
 
