@@ -107,6 +107,7 @@ function lvc_register_property_fields() {
 
 		/* ── Rates & flags ────────────────────────────────────────── */
 		array( 'key' => 'field_lvc_nightly_rate_from', 'label' => 'Nightly Rate From', 'name' => 'nightly_rate_from', 'type' => 'number', 'instructions' => 'Numeric, no currency symbol. Used for sorting and schema, not printed as a promise.' ),
+		array( 'key' => 'field_lvc_minimum_stay', 'label' => 'Minimum Stay (nights)', 'name' => 'minimum_stay', 'type' => 'number', 'min' => 1, 'max' => 60, 'step' => 1, 'instructions' => 'This villa\'s normal minimum only. Holiday, event, and peak-season rules may differ. Leave empty if it varies.' ),
 		array( 'key' => 'field_lvc_off_market', 'label' => 'Off market', 'name' => 'off_market', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Keeps the URL live for existing links but drops the property from the index and from listings.' ),
 		array( 'key' => 'field_lvc_internal_notes', 'label' => 'Internal Notes', 'name' => 'internal_notes', 'type' => 'textarea', 'rows' => 3, 'instructions' => 'Never rendered on the front end.' ),
 
