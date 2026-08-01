@@ -1,6 +1,6 @@
 <?php
 /**
- * Anguilla Beach Luxury Villas — Magazine Index (posts page).
+ * St Barts Villa Rentals — Magazine Index (posts page).
  *
  * Cloned from tulumholidayvillas-theme archive-magazine.php (v2.2) per the
  * clone-don't-rebuild rule: same hero/tabs/featured/grid/pagination markup and

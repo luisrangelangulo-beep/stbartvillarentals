@@ -1,6 +1,6 @@
 <?php
 /**
- * Anguilla Beach Luxury Villas — Single Post (magazine article).
+ * St Barts Villa Rentals — Single Post (magazine article).
  *
  * Cloned from tulumholidayvillas-theme single.php (v3.0 refined editorial dark
  * luxe) per the clone-don't-rebuild rule: same hero / byline / typography /
