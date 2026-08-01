@@ -32,10 +32,16 @@ $lvc_specs = array_filter( array(
 ) );
 ?>
 <a class="lvc-card" href="<?php echo esc_url( $lvc_url ); ?>" aria-label="<?php echo esc_attr( $lvc_name ); ?>">
+	<?php // Always render the image block. When there is no curated image it
+	// gets the --empty modifier and brand.css styles it as a "photography
+	// coming soon" placeholder — a card with no image area reads as broken.
+	// (An explicit class, not :empty, because the span holds whitespace.) ?>
 	<?php if ( $lvc_img ) : ?>
 		<span class="lvc-card__img" style="--lvc-card-img:url('<?php echo esc_url( $lvc_img ); ?>')">
 			<img src="<?php echo esc_url( $lvc_img ); ?>" alt="<?php echo esc_attr( $lvc_name ); ?>" loading="lazy" decoding="async">
 		</span>
+	<?php else : ?>
+		<span class="lvc-card__img lvc-card__img--empty" aria-hidden="true"></span>
 	<?php endif; ?>
 	<span class="lvc-card__body">
 		<?php if ( $lvc_area ) : ?><span class="lvc-card__loc"><?php echo esc_html( $lvc_area ); ?></span><?php endif; ?>

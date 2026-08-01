@@ -33,6 +33,7 @@ foreach ( array(
 	'inc/seo/schema.php',
 	'inc/nav/mega-menu.php',
 	'inc/home/acf-homepage.php',
+	'inc/page/core-pages.php',
 	'inc/security/headers.php',
 	'inc/template-router.php',
 ) as $lvc_relative ) {
