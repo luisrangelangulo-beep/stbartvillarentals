@@ -34,11 +34,21 @@ if ( ! function_exists( 'lvc_config' ) ) {
 				'brand_logo_svg' => '', // Inline SVG markup; empty = render brand_name as text.
 
 				/* ── Contact / inquiry routing ────────────────────────── */
-				// TODO before launch: this is the WP admin address, which points
-				// at the rmoceanfrontrentals domain and is a placeholder, not a
-				// decision. Set a real St Barts mailbox and confirm the domain has
-				// MX records — a no-MX domain bounces inquiries silently.
-				'support_email'  => 'luis@rmoceanfrontrentals.com',
+				// Inquiry recipient AND the address printed on the contact and
+				// legal pages.
+				//
+				// ⚠️ HOW THIS DELIVERS TODAY (checked 2026-08-01): the domain's MX
+				// points at itself — cPanel's local mail exchanger — and there is
+				// NO mailbox called support@. Delivery works only because
+				// /etc/valiases carries a catch-all (`*: stbartvillarenta`), so
+				// mail lands in the cPanel account's own inbox, readable via
+				// cPanel webmail. It does NOT bounce, but nothing notifies anyone.
+				//
+				// Create a real support@ mailbox or a forwarder to a monitored
+				// address in cPanel → Email Accounts / Forwarders. Until then,
+				// check that inbox — a villa enquiry is worth $30k–45k and will
+				// sit there unread.
+				'support_email'  => 'support@stbartvillarentals.com',
 				'owner_email'    => '', // Owner leads; empty = falls back to support_email.
 				'phone'          => '', // e.g. '+1 (000) 000-0000'; empty = hide.
 				// Left empty deliberately: this brand has no WhatsApp line yet and
