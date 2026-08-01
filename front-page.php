@@ -113,7 +113,7 @@ get_header();
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
-	ANGUILLA BEACH LUXURY VILLAS — HOMEPAGE (cloned from THV v3.0 dark theme)
+	ST BARTS VILLA RENTALS — HOMEPAGE (cloned from THV v3.0 dark theme)
 	St Barts palette: volcanic basalt ground, salt-rose accent, salt-crust text.
 	═══════════════════════════════════════════════════════════════════════════ */
 
