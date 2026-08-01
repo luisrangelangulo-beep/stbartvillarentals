@@ -31,8 +31,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 // state until a St Barts hero is set on the front page.
 $hero_image = (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) );
 
-$villa_count = (int) wp_count_posts( 'villa' )->publish;
-$archive_url = get_post_type_archive_link( 'villa' );
+// The CPT name is config, not a constant — theme-config.php offers villa,
+// chalet, condo or property, so reading it here is what keeps this template
+// brand-agnostic. `?? 0` covers the window before any post of that type exists:
+// wp_count_posts() has no ->publish to read then, and the count is printed into
+// visible CTA copy ("View All N Villas") where a warning would surface.
+$lvc_cpt     = lvc_config( 'cpt', 'villa' );
+$villa_count = (int) ( wp_count_posts( $lvc_cpt )->publish ?? 0 );
+$archive_url = get_post_type_archive_link( $lvc_cpt );
 $whatsapp    = (string) lvc_config( 'whatsapp_url', '' );
 
 // Areas: the two strongest WITH imagery become the big cards; every area with
