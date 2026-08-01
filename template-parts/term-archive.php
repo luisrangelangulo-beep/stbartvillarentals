@@ -26,8 +26,10 @@
  * - No other inline JSON-LD — inc/seo/schema.php owns page schema.
  * - THV's inline thv_inquiry form replaced by the shared
  *   template-parts/inquiry-form part (AJAX handler + Turnstile).
- * - Breadcrumb archive link built with get_post_type_archive_link('villa'),
- *   not a hardcoded path (known THV bug).
+ * - Breadcrumb archive link built with lvc_archive_url(), not a hardcoded path
+ *   (known THV bug). That helper resolves the CPT from theme-config.php and
+ *   falls back to the configured archive slug, so it survives both a rename of
+ *   the post type and a registration with no archive.
  *
  * @package StBartsVillaRentals
  */
@@ -113,7 +115,7 @@ $lvc_single_sib_mode = ( 1 === count( $lvc_siblings ) );
 // ── Counts / URLs ───────────────────────────────────────────────────────────
 $lvc_current_page = max( 1, (int) get_query_var( 'paged' ) );
 $lvc_total_villas = (int) $GLOBALS['wp_query']->found_posts;
-$lvc_archive_url  = get_post_type_archive_link( 'villa' );
+$lvc_archive_url  = lvc_archive_url();
 $lvc_whatsapp     = (string) lvc_config( 'whatsapp_url', '' );
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -19,9 +19,9 @@
  *  - sticky mobile "Request Availability" bar (.lvc-single__mobilebar, brand.css)
  *
  * Adaptations from THV, per the port contract:
- *  - breadcrumb archive crumb uses get_post_type_archive_link('villa')
- *    (fixes THV's known hardcoded-'/luxury-villas/' breadcrumb bug — same URL
- *    here, but resolved from the CPT registration, not hardcoded)
+ *  - breadcrumb archive crumb uses lvc_archive_url() (fixes THV's known
+ *    hardcoded-'/luxury-villas/' breadcrumb bug — same URL here, but resolved
+ *    from theme-config.php rather than hardcoded)
  *  - THV sections with no Anguilla data are dropped: beach_access strip stat,
  *    amenity-taxonomy grid, hardcoded brand reviews, concierge-services grid,
  *    4.9-rating hero badge

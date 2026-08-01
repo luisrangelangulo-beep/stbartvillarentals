@@ -38,7 +38,7 @@ $hero_image = (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page
 // visible CTA copy ("View All N Villas") where a warning would surface.
 $lvc_cpt     = lvc_config( 'cpt', 'villa' );
 $villa_count = (int) ( wp_count_posts( $lvc_cpt )->publish ?? 0 );
-$archive_url = get_post_type_archive_link( $lvc_cpt );
+$archive_url = lvc_archive_url();
 $whatsapp    = (string) lvc_config( 'whatsapp_url', '' );
 
 // Areas: the two strongest WITH imagery become the big cards; every area with

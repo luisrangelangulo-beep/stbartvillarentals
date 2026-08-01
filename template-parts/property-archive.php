@@ -70,7 +70,7 @@ if ( is_wp_error( $bedroom_terms ) ) {
 
 $active_filter_count = ( $f_area ? 1 : 0 ) + ( $f_bedrooms ? 1 : 0 ) + ( $f_guests ? 1 : 0 ) + ( $f_arrival ? 1 : 0 );
 
-$archive_url = get_post_type_archive_link( 'villa' );
+$archive_url = lvc_archive_url();
 $whatsapp    = (string) lvc_config( 'whatsapp_url', '' );
 
 // Hero image â€” same single source as the homepage hero (ACF on the front page),
