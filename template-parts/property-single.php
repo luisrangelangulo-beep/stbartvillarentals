@@ -224,7 +224,7 @@ while ( have_posts() ) :
 	--lvc-shadow    : 0 4px 24px rgba(0,0,0,0.5);
 	--lvc-shadow-h  : 0 8px 32px rgba(0,0,0,0.7);
 	--lvc-fd        : 'Gilda Display', Georgia, serif;
-	--lvc-fb        : 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+	--lvc-fb        : 'Albert Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 	--lvc-ease      : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -935,7 +935,7 @@ while ( have_posts() ) :
 .lvc-slider {
 	position: relative;
 	width: 100%;
-	max-width: 1200px;
+	max-width: 100%;
 	margin: 0 auto;
 	overflow: hidden;
 	background: var(--lvc-bg);
@@ -955,7 +955,7 @@ while ( have_posts() ) :
 	flex: 0 0 100%;
 	width: 100%;
 	margin: 0;
-	height: 700px;
+	height: 520px; /* Tulum renders its slider at 520; 700 was the full-bleed height. */
 	scroll-snap-align: start;
 	display: flex;
 	align-items: center;
@@ -1112,6 +1112,74 @@ while ( have_posts() ) :
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+	AMENITIES — auto-sorted into categories by keyword on the term NAME.
+	Cloned from the Tulum property template. Keyword matching, not a slug
+	map: a slug map cloned between sites silently mis-sorts every term the
+	origin site did not happen to have.
+	═══════════════════════════════════════════════════════════════════════ */
+.lvc-amenities {
+	background: var(--lvc-bg2);
+	padding: 4rem 2rem;
+	border-top: 1px solid var(--lvc-border);
+	border-bottom: 1px solid var(--lvc-border);
+}
+
+.lvc-amenities__inner {
+	max-width: 1600px;
+	margin: 0 auto;
+}
+
+.lvc-amenities__header {
+	margin-bottom: 2.5rem;
+}
+
+.lvc-amenities__categories {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 2rem;
+}
+
+@media (max-width: 640px) {
+	.lvc-amenities__categories { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 420px) {
+	.lvc-amenities__categories { grid-template-columns: 1fr; }
+}
+
+.lvc-amenity-category__title {
+	font-family: var(--lvc-fd);
+	font-size: 1.1rem;
+	font-weight: 500;
+	color: var(--lvc-accent);
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid var(--lvc-border);
+}
+
+.lvc-amenity-category__list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.lvc-amenity-category__item {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	font-size: 0.85rem;
+	color: var(--lvc-soft);
+}
+
+.lvc-amenity-dot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--lvc-soft);
+	flex-shrink: 0;
+}
+/* ═══════════════════════════════════════════════════════════════════════
 	GALLERY + FAQ — merged split section, mirroring the Tulum property
 	template. The slider at roughly half width renders its sources sharp
 	(full-bleed left them with no DPR headroom) and the FAQ fills the other
@@ -1141,6 +1209,10 @@ while ( have_posts() ) :
 .lvc-media-faq__media {
 	position: sticky;
 	top: 90px;
+	/* Grid items default to min-width:auto, so the slider's intrinsic width
+	   would not shrink and it starved the FAQ column down to a few words per
+	   line. This is what lets the 1.1fr / 1fr split actually apply. */
+	min-width: 0;
 }
 
 @media (max-width: 980px) {
@@ -2008,6 +2080,78 @@ while ( have_posts() ) :
 	GALLERY SLIDER — full photo set, THV pc-slider clone. theme.js still owns
 	the behavior via the data-lvc-slider* attributes (scroll-snap + counter).
 	═══════════════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════════════════
+	AMENITIES — the villa's own amenity terms, grouped. Cloned from the Tulum
+	property template, which sorts by keyword against the term NAME rather than
+	a slug map, so it works on any site's vocabulary without a lookup table to
+	fall out of date.
+	═══════════════════════════════════════════════════════════════════════════ -->
+<?php
+$lvc_amenities = get_the_terms( $lvc_id, 'amenity' );
+if ( $lvc_amenities && ! is_wp_error( $lvc_amenities ) ) :
+
+	$lvc_amenity_keywords = array(
+		'Kitchen & Dining' => array( 'kitchen', 'grill', 'barbecue', 'bbq', 'outdoor dining', 'dining', 'chef' ),
+		'Outdoor & Pool'   => array( 'pool', 'terrace', 'rooftop', 'outdoor', 'patio', 'deck', 'garden' ),
+		'Entertainment'    => array( 'theater', 'theatre', 'media', 'wi-fi', 'wifi', 'gym', 'hot tub', 'tub' ),
+		'Services'         => array( 'concierge', 'housekeeping', 'staff', 'spa', 'parking' ),
+		'Beach & Water'    => array( 'beach', 'ocean', 'kayak', 'water', 'loungers', 'sea' ),
+		'Safety & Comfort' => array( 'security', 'air conditioning', 'child', 'safe', 'ac' ),
+	);
+
+	$lvc_grouped   = array();
+	$lvc_ungrouped = array();
+
+	foreach ( $lvc_amenities as $lvc_am ) {
+		$lvc_am_name  = $lvc_am->name;
+		$lvc_am_lower = strtolower( $lvc_am_name );
+		$lvc_assigned = false;
+
+		foreach ( $lvc_amenity_keywords as $lvc_cat => $lvc_words ) {
+			foreach ( $lvc_words as $lvc_word ) {
+				if ( false !== strpos( $lvc_am_lower, $lvc_word ) ) {
+					$lvc_grouped[ $lvc_cat ][] = $lvc_am_name;
+					$lvc_assigned              = true;
+					break 2;
+				}
+			}
+		}
+
+		if ( ! $lvc_assigned ) {
+			$lvc_ungrouped[] = $lvc_am_name;
+		}
+	}
+
+	// Anything the keywords miss still shows, under a neutral heading.
+	if ( $lvc_ungrouped ) {
+		$lvc_grouped['Features'] = $lvc_ungrouped;
+	}
+	?>
+<section class="lvc-amenities" aria-label="Villa amenities">
+	<div class="lvc-amenities__inner">
+		<header class="lvc-amenities__header">
+			<span class="lvc-label">Villa Highlights</span>
+			<h2 class="lvc-heading">Amenities &amp; Features</h2>
+		</header>
+		<div class="lvc-amenities__categories">
+			<?php foreach ( $lvc_grouped as $lvc_cat_name => $lvc_items ) : ?>
+				<?php if ( ! $lvc_items ) { continue; } ?>
+			<div class="lvc-amenity-category">
+				<h3 class="lvc-amenity-category__title"><?php echo esc_html( $lvc_cat_name ); ?></h3>
+				<ul class="lvc-amenity-category__list">
+					<?php foreach ( $lvc_items as $lvc_item ) : ?>
+					<li class="lvc-amenity-category__item">
+						<span class="lvc-amenity-dot" aria-hidden="true"></span>
+						<?php echo esc_html( $lvc_item ); ?>
+					</li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+<?php endif; ?>
 <?php
 $lvc_has_slider = count( $lvc_slides ) > 1;
 $lvc_has_faq    = ( is_array( $lvc_faq ) && count( $lvc_faq ) >= 2 );

@@ -34,6 +34,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
+
+	<?php
+	/*
+	 * Webfonts. Every :root block in this theme declared 'Gilda Display' and a
+	 * sans body face, but nothing ever loaded them — so the serif fell back to
+	 * Georgia, the sans to the system UI font, and, with no 300 weight present,
+	 * every `font-weight: 300` in the templates rendered at 400. That is why the
+	 * type read noticeably heavier than Tulum's, which loads both properly.
+	 */
+	?>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Albert+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class( 'lvc-body' ); ?>>
@@ -109,7 +123,7 @@ $lvc_has_mega    = function_exists( 'lvc_mega_menu' ) && lvc_config( 'nav_mega',
 	--lvc-border    : rgba(245,240,234,0.06);
 	--lvc-border-h  : rgba(194,129,140,0.25);
 	--lvc-fd        : 'Gilda Display', Georgia, serif;
-	--lvc-fb        : 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+	--lvc-fb        : 'Albert Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 	--lvc-px        : clamp(1.25rem, 5vw, 4rem);
 	--lvc-ease      : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }

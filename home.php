@@ -114,7 +114,7 @@ get_header();
 	line-height: 1.75;
 	max-width: 700px;
 	margin: 0 auto 2rem;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 /* ─── Category Tabs ─────────────────────────────────────────────────── */
@@ -135,7 +135,7 @@ get_header();
 	color: rgba(255,255,255,0.55) !important;
 	border: 1px solid rgba(255,255,255,0.12);
 	transition: all 0.2s ease;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 	font-weight: 500;
 	background: transparent;
 	text-decoration: none;
@@ -210,7 +210,7 @@ get_header();
 	font-weight: 500;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 .lvc-archive__featured-title {
@@ -229,7 +229,7 @@ get_header();
 	line-height: 1.7;
 	max-width: 500px;
 	margin: 0 0 1.25rem;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 .lvc-archive__featured-cta {
@@ -238,7 +238,7 @@ get_header();
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: var(--lvc-accent, #c2818c) !important;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 /* ─── Article Grid ──────────────────────────────────────────────────── */
@@ -300,7 +300,7 @@ get_header();
 	font-weight: 500;
 	margin: 0 0 0.5rem;
 	display: block;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 .lvc-archive__card-title {
@@ -315,7 +315,7 @@ get_header();
 .lvc-archive__card-readtime {
 	font-size: 0.72rem;
 	color: rgba(255,255,255,0.5);
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 /* ─── Pagination ────────────────────────────────────────────────────── */
@@ -341,7 +341,7 @@ get_header();
 	color: rgba(255,255,255,0.55);
 	border: 1px solid var(--lvc-border, rgba(255,255,255,0.12));
 	transition: all 0.2s ease;
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 	text-decoration: none;
 }
 
@@ -362,7 +362,7 @@ get_header();
 	text-align: center;
 	padding: 4rem var(--lvc-px, 2rem);
 	color: rgba(255,255,255,0.5);
-	font-family: var(--lvc-fb, 'Outfit', system-ui, sans-serif);
+	font-family: var(--lvc-fb, 'Albert Sans', system-ui, sans-serif);
 }
 
 /* ─── Responsive ────────────────────────────────────────────────────── */

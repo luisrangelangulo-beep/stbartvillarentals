@@ -271,7 +271,7 @@ while ( have_posts() ) :
 	--lvc-accent:       #c2818c;
 	--lvc-accent-soft:  rgba(194,129,140,0.10);
 	--lvc-fd:           'Gilda Display', Georgia, serif;
-	--lvc-fb:           'Outfit', system-ui, sans-serif;
+	--lvc-fb:           'Albert Sans', system-ui, sans-serif;
 	--lvc-ease:         cubic-bezier(.2,.8,.2,1);
 }
 

@@ -146,7 +146,7 @@ get_header();
 	--lvc-shadow    : 0 4px 24px rgba(0,0,0,0.5);
 	--lvc-shadow-h  : 0 8px 32px rgba(0,0,0,0.7);
 	--lvc-fd        : 'Gilda Display', Georgia, serif;
-	--lvc-fb        : 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+	--lvc-fb        : 'Albert Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 	--lvc-ease      : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 	--lvc-px        : clamp(1.25rem, 5vw, 4rem);
 }
