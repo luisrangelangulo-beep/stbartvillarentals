@@ -625,7 +625,10 @@ while ( have_posts() ) :
 
 .lvc-intro__quote {
 	font-family   : var(--lvc-fd);
-	font-size     : clamp(1.5rem, 3.5vw, 2rem);
+	/* Deliberately smaller than Tulum, which uses clamp(1.5rem, 3.5vw, 2rem)
+	   here. At 680px the larger size wrapped to ~8 words a line and read as a
+	   headline rather than a lead paragraph. */
+	font-size     : clamp(1.15rem, 2.2vw, 1.45rem);
 	font-style    : italic;
 	font-weight   : 400;
 	color         : var(--lvc-text);
