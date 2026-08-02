@@ -250,7 +250,7 @@ while ( have_posts() ) :
 	otherwise strip: `.lvc-wrap *` ties single-class .lvc-* rules on
 	specificity and this inline sheet loads after brand.css. */
 .lvc-wrap .lvc-btn { padding: 0.95rem 1.9rem; }
-.lvc-wrap .lvc-faq__a { padding: 0 0 1.35rem; }
+.lvc-wrap .lvc-faq__a { padding: 0; }
 .lvc-wrap .lvc-faq__a p { margin: 0 0 0.9rem; }
 @media (max-width: 900px) {
 	.lvc-wrap .lvc-single__mobilebar { padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom)); }
@@ -327,25 +327,21 @@ while ( have_posts() ) :
 	background: var(--lvc-bg);
 }
 
+/* Static hero. The Tulum property template this one mirrors has no hero
+   animation, and a 20s scale on a full-bleed background keeps the largest
+   element on the page compositing for the whole of it. inset returns to 0
+   because the negative inset only existed to hide the pan's edges. */
 .lvc-hero__bg {
 	position: absolute;
-	inset: -5%; /* Negative inset allows panning/scaling without revealing edges */
+	inset: 0;
 	background-size: cover;
 	background-position: center;
 	z-index: 0;
-	animation: lvcKenBurns 20s ease-out forwards;
-	will-change: transform;
 }
 
-@keyframes lvcKenBurns {
-	0% { transform: scale(1) translate(0, 0); }
-	100% { transform: scale(1.08) translate(-1%, -1%); }
-}
-
-/* Imageless villa — dark gradient stands in for the photo, no animation. */
+/* Imageless villa — dark gradient stands in for the photo. */
 .lvc-hero--noimg .lvc-hero__bg {
 	background: radial-gradient(ellipse at 30% 20%, var(--lvc-bg3) 0%, var(--lvc-bg2) 45%, var(--lvc-bg) 100%);
-	animation: none;
 }
 
 /* Top fade — header legibility */
@@ -936,16 +932,6 @@ while ( have_posts() ) :
 	THV heights: 700px desktop (template override), 420px ≤768px, 330px
 	≤560px (shortcode 0.7/0.55 tiers of the 600px base).
 	═══════════════════════════════════════════════════════════════════════ */
-.lvc-slider-wrap {
-	background: var(--lvc-bg);
-	padding: 0 2rem 4rem;
-}
-
-.lvc-slider-wrap__header {
-	text-align: center;
-	padding: 4rem 0 2.5rem;
-}
-
 .lvc-slider {
 	position: relative;
 	width: 100%;
@@ -1126,22 +1112,70 @@ while ( have_posts() ) :
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-	FAQ — "Good to Know" (brand.css .lvc-faq details in THV framing)
+	GALLERY + FAQ — merged split section, mirroring the Tulum property
+	template. The slider at roughly half width renders its sources sharp
+	(full-bleed left them with no DPR headroom) and the FAQ fills the other
+	half instead of sitting as a thin column further down the page.
 	═══════════════════════════════════════════════════════════════════════ */
-.lvc-faq {
+.lvc-media-faq {
 	background: var(--lvc-bg);
 	padding: 4rem 2rem;
 	border-top: 1px solid var(--lvc-border);
 }
 
-.lvc-faq__inner {
-	max-width: 780px;
+.lvc-media-faq__grid {
+	max-width: 1400px;
 	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 1.1fr 1fr;
+	gap: 3.5rem;
+	align-items: start;
 }
 
+/* One column present only — centre it rather than leaving a dead half. */
+.lvc-media-faq__grid--single {
+	grid-template-columns: 1fr;
+	max-width: 800px;
+}
+
+.lvc-media-faq__media {
+	position: sticky;
+	top: 90px;
+}
+
+@media (max-width: 980px) {
+	.lvc-media-faq__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+	.lvc-media-faq__media { position: static; }
+}
+
+/* FAQ — "Good to Know". A plain definition list, not an accordion: every
+   answer is visible without a click, which is how Tulum renders it. */
 .lvc-faq__header {
-	text-align: center;
+	text-align: left;
 	margin-bottom: 2rem;
+}
+
+.lvc-faq__list { margin: 0; }
+
+.lvc-faq__item {
+	border-bottom: 1px solid var(--lvc-border);
+	padding: 1.5rem 0;
+}
+
+.lvc-faq__item:last-child { border-bottom: none; }
+
+.lvc-faq__q {
+	font-family: var(--lvc-fd);
+	font-size: 1.15rem;
+	color: var(--lvc-text);
+	margin: 0 0 0.6rem;
+}
+
+.lvc-faq__a {
+	font-size: 0.95rem;
+	color: var(--lvc-soft);
+	line-height: 1.7;
+	margin: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1974,21 +2008,43 @@ while ( have_posts() ) :
 	GALLERY SLIDER — full photo set, THV pc-slider clone. theme.js still owns
 	the behavior via the data-lvc-slider* attributes (scroll-snap + counter).
 	═══════════════════════════════════════════════════════════════════════════ -->
-<?php if ( count( $lvc_slides ) > 1 ) : ?>
-<section class="lvc-slider-wrap" id="gallery-slider" aria-label="Property photo gallery">
-	<div class="lvc-slider-wrap__header">
-		<span class="lvc-label">All Photos</span>
-		<h2 class="lvc-heading"><?php echo esc_html( $lvc_display ); ?> in Pictures</h2>
-	</div>
-	<div class="lvc-slider" data-lvc-slider>
-		<div class="lvc-slider__track" data-lvc-slider-track tabindex="0" role="group" aria-label="Photo carousel, scrollable">
-			<?php foreach ( $lvc_slides as $lvc_sl_i => $lvc_s ) : ?>
-			<figure class="lvc-slider__slide"><img src="<?php echo esc_url( $lvc_s ); ?>" alt="<?php echo esc_attr( $lvc_display . ' photo ' . ( $lvc_sl_i + 1 ) ); ?>" loading="lazy" decoding="async"></figure>
-			<?php endforeach; ?>
+<?php
+$lvc_has_slider = count( $lvc_slides ) > 1;
+$lvc_has_faq    = ( is_array( $lvc_faq ) && count( $lvc_faq ) >= 2 );
+?>
+<?php if ( $lvc_has_slider || $lvc_has_faq ) : ?>
+<section class="lvc-media-faq" id="gallery-slider" aria-label="Photo gallery and frequently asked questions">
+	<div class="lvc-media-faq__grid<?php echo ( $lvc_has_slider && $lvc_has_faq ) ? '' : ' lvc-media-faq__grid--single'; ?>">
+		<?php if ( $lvc_has_slider ) : ?>
+		<div class="lvc-media-faq__media">
+			<div class="lvc-slider" data-lvc-slider>
+				<div class="lvc-slider__track" data-lvc-slider-track tabindex="0" role="group" aria-label="Photo carousel, scrollable">
+					<?php foreach ( $lvc_slides as $lvc_sl_i => $lvc_s ) : ?>
+					<figure class="lvc-slider__slide"><img src="<?php echo esc_url( $lvc_s ); ?>" alt="<?php echo esc_attr( $lvc_display . ' photo ' . ( $lvc_sl_i + 1 ) ); ?>" loading="lazy" decoding="async"></figure>
+					<?php endforeach; ?>
+				</div>
+				<button class="lvc-slider__nav lvc-slider__nav--prev" type="button" data-lvc-slider-prev aria-label="Previous photo">&#8249;</button>
+				<button class="lvc-slider__nav lvc-slider__nav--next" type="button" data-lvc-slider-next aria-label="Next photo">&#8250;</button>
+				<p class="lvc-slider__count"><span data-lvc-slider-current>1</span> / <?php echo (int) count( $lvc_slides ); ?></p>
+			</div>
 		</div>
-		<button class="lvc-slider__nav lvc-slider__nav--prev" type="button" data-lvc-slider-prev aria-label="Previous photo">&#8249;</button>
-		<button class="lvc-slider__nav lvc-slider__nav--next" type="button" data-lvc-slider-next aria-label="Next photo">&#8250;</button>
-		<p class="lvc-slider__count"><span data-lvc-slider-current>1</span> / <?php echo (int) count( $lvc_slides ); ?></p>
+		<?php endif; ?>
+		<?php if ( $lvc_has_faq ) : ?>
+		<div class="lvc-media-faq__faq">
+			<header class="lvc-faq__header">
+				<span class="lvc-label">Good to Know</span>
+				<h2 class="lvc-heading">Questions About <?php echo esc_html( $lvc_display ); ?></h2>
+			</header>
+			<dl class="lvc-faq__list">
+				<?php foreach ( $lvc_faq as $lvc_qa ) : ?>
+				<div class="lvc-faq__item">
+					<dt class="lvc-faq__q"><?php echo esc_html( $lvc_qa['question'] ); ?></dt>
+					<dd class="lvc-faq__a"><?php echo wp_kses_post( wpautop( $lvc_qa['answer'] ) ); ?></dd>
+				</div>
+				<?php endforeach; ?>
+			</dl>
+		</div>
+		<?php endif; ?>
 	</div>
 </section>
 <?php endif; ?>
@@ -2034,22 +2090,6 @@ while ( have_posts() ) :
 <!-- ═══════════════════════════════════════════════════════════════════════════
 	FAQ — "Good to Know" (property repeater, else universal set)
 	═══════════════════════════════════════════════════════════════════════════ -->
-<?php if ( $lvc_faq ) : ?>
-<section class="lvc-faq" aria-label="Frequently asked questions">
-	<div class="lvc-faq__inner">
-		<header class="lvc-faq__header">
-			<span class="lvc-label">Before You Book</span>
-			<h2 class="lvc-heading">Good to Know</h2>
-		</header>
-		<?php foreach ( $lvc_faq as $lvc_qa ) : ?>
-		<details class="lvc-faq__item">
-			<summary class="lvc-faq__q"><?php echo esc_html( $lvc_qa['question'] ); ?></summary>
-			<div class="lvc-faq__a"><?php echo wp_kses_post( wpautop( $lvc_qa['answer'] ) ); ?></div>
-		</details>
-		<?php endforeach; ?>
-	</div>
-</section>
-<?php endif; ?>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
 	INQUIRY FORM — core AJAX form (handler + Turnstile + honeypot preserved)
