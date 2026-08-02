@@ -68,7 +68,11 @@ if ( ! $lvc_terms_page ) {
 $lvc_terms_url = $lvc_terms_page ? get_permalink( $lvc_terms_page ) : home_url( '/terms-and-conditions/' );
 
 // Front page + taxonomy landings carry their own inquiry/CTA sections (THV pattern).
-$lvc_hide_prefooter = is_front_page() || is_tax( array( 'area', 'bedrooms', 'beach_access', 'collection' ) );
+// The villa archive and every taxonomy landing already close with their own
+// final CTA, so the prefooter repeated the same offer directly above it.
+$lvc_hide_prefooter = is_front_page()
+	|| is_post_type_archive( lvc_config( 'cpt', 'villa' ) )
+	|| is_tax( array( 'area', 'bedrooms', 'beach_access', 'collection' ) );
 ?>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

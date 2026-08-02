@@ -373,6 +373,52 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 	text-transform: uppercase;
 	color         : var(--lvc-muted);
 }
+/* Card badge — the villa's beach-access term, mirroring the Tulum archive. */
+.lvc-card__badge {
+	position      : absolute;
+	top           : 14px;
+	left          : 14px;
+	padding       : 5px 11px;
+	background    : var(--lvc-accent);
+	color         : var(--lvc-bg);
+	font-size     : 0.64rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	font-weight   : 500;
+	border-radius : 3px;
+	z-index       : 2;
+}
+
+/* Orientation block — the link layer into the indexable landings. */
+.lvc-guide {
+	padding      : 5rem var(--lvc-px);
+	background   : var(--lvc-bg2);
+	border-top   : 1px solid var(--lvc-border);
+}
+.lvc-guide__inner { max-width: 820px; margin: 0 auto; }
+.lvc-guide h2 {
+	font-family  : var(--lvc-fd);
+	font-size    : clamp(1.6rem, 3vw, 2.4rem);
+	font-weight  : 400;
+	color        : var(--lvc-text);
+	line-height  : 1.2;
+	margin       : 0 0 1.5rem;
+}
+.lvc-guide h2 em { font-style: italic; color: var(--lvc-accent); }
+.lvc-guide p {
+	font-size    : 0.95rem;
+	line-height  : 1.85;
+	color        : var(--lvc-soft);
+	margin       : 0 0 1.15rem;
+}
+.lvc-guide a {
+	color                      : var(--lvc-text);
+	text-decoration            : underline;
+	text-decoration-color      : var(--lvc-border-h);
+	text-underline-offset      : 3px;
+	transition                 : color 0.2s, text-decoration-color 0.2s;
+}
+.lvc-guide a:hover { color: var(--lvc-accent); text-decoration-color: var(--lvc-accent); }
 .lvc-card__body { padding: 1.2rem 1.35rem 1.35rem; flex: 1; display: flex; flex-direction: column; }
 .lvc-card__loc {
 	font-size     : 0.68rem;
@@ -665,11 +711,18 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 				$loc_label    = $v_area ? $v_area . ', ' . lvc_config( 'region' ) : lvc_config( 'region' );
 
 				// Card image â€” deliberately NO gallery fallback; placeholder is expected.
+				// Beach-access badge: the villa's own term, same as the Tulum archive.
+				$v_beach_terms = get_the_terms( $vid, 'beach_access' );
+				$v_badge       = ( ! empty( $v_beach_terms ) && ! is_wp_error( $v_beach_terms ) ) ? $v_beach_terms[0]->name : '';
+
 				$v_thumb     = function_exists( 'lvc_property_image' ) ? lvc_property_image( $vid ) : get_the_post_thumbnail_url( $vid, 'large' );
 				$v_img_style = ( $v_thumb ? "background-image:url('" . esc_url( $v_thumb ) . "');" : '' );
 				?>
 				<a href="<?php echo esc_url( lvc_trip_url( get_permalink( $vid ) ) ); ?>" class="lvc-card">
 					<div class="lvc-card__img" style="<?php echo esc_attr( $v_img_style ); ?>">
+						<?php if ( $v_badge ) : ?>
+							<span class="lvc-card__badge"><?php echo esc_html( $v_badge ); ?></span>
+						<?php endif; ?>
 						<?php if ( ! $v_thumb ) : ?>
 							<span class="lvc-card__placeholder">Photography coming soon</span>
 						<?php endif; ?>
@@ -753,6 +806,40 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 	<?php endif; ?>
 
 	<?php // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FINAL CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ?>
+	<?php // ═══ ORIENTATION — link layer into the indexable landings ═══ ?>
+	<?php
+	$lvc_guide_areas = array_slice( array_filter( (array) get_terms( array( 'taxonomy' => 'area', 'hide_empty' => true, 'orderby' => 'count', 'order' => 'DESC' ) ), function ( $t ) {
+		return $t instanceof WP_Term && (int) $t->count >= (int) lvc_config( 'min_index_count', 3 );
+	} ), 0, 4 );
+	$lvc_guide_beach = array_filter( (array) get_terms( array( 'taxonomy' => 'beach_access', 'hide_empty' => true, 'orderby' => 'count', 'order' => 'DESC' ) ), function ( $t ) {
+		return $t instanceof WP_Term && (int) $t->count >= (int) lvc_config( 'min_index_count', 3 );
+	} );
+	$lvc_term_links = function ( $terms ) {
+		$out = array();
+		foreach ( $terms as $t ) {
+			$u = get_term_link( $t );
+			if ( ! is_wp_error( $u ) ) {
+				$out[] = '<a href="' . esc_url( $u ) . '">' . esc_html( $t->name ) . '</a>';
+			}
+		}
+		$last = array_pop( $out );
+		return $out ? implode( ', ', $out ) . ' and ' . $last : (string) $last;
+	};
+	?>
+	<?php if ( $lvc_guide_areas ) : ?>
+	<section class="lvc-guide" aria-label="How to choose where to stay">
+		<div class="lvc-guide__inner">
+			<p class="lvc-eyebrow">Where to Start</p>
+			<h2>Choosing the right <em>corner of the island</em></h2>
+			<p><?php echo wp_kses_post( str_replace( '%AREAS%', $lvc_term_links( $lvc_guide_areas ), 'St Barth&eacute;lemy is small enough to drive end to end in half an hour, so the choice is less about distance than about what you want outside the door. %AREAS% hold most of the collection.' ) ); ?></p>
+			<p><?php echo wp_kses_post( str_replace( '%BEACHY%', $lvc_guide_beach ? $lvc_term_links( $lvc_guide_beach ) : esc_html( lvc_config( 'region' ) ), 'Beach-first trips land on the sand at %BEACHY%, where the water is calm and the villa is steps from it. Town-first trips do better around Gustavia, walking distance from the quay, the restaurants and the shops. The hillside areas &mdash; Lurin, Pointe Milou, Colombier &mdash; trade direct beach access for the long views and the quiet.' ) ); ?></p>
+			<?php if ( $lvc_guide_beach ) : ?>
+			<p>Or browse by how close you want to be to the water: <?php echo wp_kses_post( $lvc_term_links( $lvc_guide_beach ) ); ?>.</p>
+			<?php endif; ?>
+		</div>
+	</section>
+	<?php endif; ?>
+
 	<section class="lvc-final">
 		<div class="lvc-final__inner">
 			<p class="lvc-eyebrow">Concierge Matching</p>

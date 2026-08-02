@@ -74,3 +74,21 @@ function lvc_archive_filters( $q ) {
 		$q->set( 'tax_query', $tax_query );
 	}
 }
+
+/**
+ * Twelve villas per archive page.
+ *
+ * WordPress' default of 10 leaves the four-across grid with a two-card last row
+ * and a visible gap. 12 divides evenly by 4, 3 and 2, so every breakpoint fills
+ * its rows.
+ */
+add_action( 'pre_get_posts', function ( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+	$lvc_cpt = lvc_config( 'cpt', 'villa' );
+	if ( $query->is_post_type_archive( $lvc_cpt ) || $query->is_tax( array( 'area', 'bedrooms', 'beach_access', 'collection' ) ) ) {
+		$query->set( 'posts_per_page', 12 );
+	}
+}, 20 );
+// phpcs:ignore -- marker: lvc_archive_posts_per_page
