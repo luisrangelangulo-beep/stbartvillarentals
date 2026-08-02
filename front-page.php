@@ -93,7 +93,7 @@ foreach ( $size_terms as $t ) {
 usort( $size_cards, function ( $a, $b ) {
 	return ( '' === $a['image'] ) <=> ( '' === $b['image'] );
 } );
-$size_cards = array_slice( $size_cards, 0, 6 );
+$size_cards = array_slice( $size_cards, 0, 5 );
 
 // Beach access band. Same component and the same indexability rule as the size
 // band: a term under min_index_count is noindexed, so linking it from the
@@ -121,7 +121,7 @@ if ( taxonomy_exists( 'beach_access' ) ) {
 	usort( $access_cards, function ( $a, $b ) {
 		return ( '' === $a['image'] ) <=> ( '' === $b['image'] );
 	} );
-	$access_cards = array_slice( $access_cards, 0, 6 );
+	$access_cards = array_slice( $access_cards, 0, 3 );
 }
 
 // Featured villas: villas WITH a featured image lead while most photo sets
@@ -445,7 +445,7 @@ get_header();
 .lvc-experiences__header { text-align: center; margin-bottom: 3.5rem; }
 .lvc-experiences__title { font-family: var(--lvc-fd); font-size: clamp(1.75rem, 3vw, 2.75rem); font-weight: 400; color: var(--lvc-text); margin: 0; line-height: 1.15; }
 .lvc-experiences__title em { font-style: italic; color: var(--lvc-accent); }
-.lvc-experiences__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; max-width: 1600px; margin: 0 auto; }
+.lvc-experiences__grid { display: grid; grid-template-columns: repeat(var(--lvc-cols, 3), minmax(0, 1fr)); gap: 1.25rem; max-width: 1600px; margin: 0 auto; }
 .lvc-exp-card {
 	position       : relative;
 	height         : 280px;
@@ -600,7 +600,7 @@ get_header();
 }
 @media (max-width: 1024px) {
 	.lvc-dest-grid          { grid-template-columns: 1fr; }
-	.lvc-experiences__grid  { grid-template-columns: repeat(2, 1fr); }
+	.lvc-experiences__grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.lvc-villa-grid         { grid-template-columns: repeat(2, 1fr); }
 	.lvc-area-grid          { grid-template-columns: repeat(2, 1fr); }
 	.lvc-why__inner         { gap: 3rem; }
@@ -622,7 +622,7 @@ get_header();
 	.lvc-search__inner      { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.lvc-search__intro      { grid-column: 1 / -1; padding-right: 0; }
 	.lvc-search__submit     { align-self: end; }
-	.lvc-experiences__grid  { grid-template-columns: 1fr; }
+	.lvc-experiences__grid  { grid-template-columns: minmax(0, 1fr); }
 	.lvc-villa-grid         { grid-template-columns: 1fr; }
 	.lvc-area-grid          { grid-template-columns: 1fr; }
 	.lvc-why__inner         { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -860,7 +860,7 @@ get_header();
 			<h2 class="lvc-experiences__title">Find Your <em>Villa Size</em></h2>
 		</div>
 
-		<div class="lvc-experiences__grid">
+		<div class="lvc-experiences__grid" style="--lvc-cols: <?php echo (int) count( $size_cards ); ?>">
 			<?php
 			foreach ( $size_cards as $sc ) :
 				$s_url = get_term_link( $sc['term'] );
@@ -897,7 +897,7 @@ get_header();
 			<h2 class="lvc-experiences__title">Choose Your <em>Position on the Water</em></h2>
 		</div>
 
-		<div class="lvc-experiences__grid">
+		<div class="lvc-experiences__grid" style="--lvc-cols: <?php echo (int) count( $access_cards ); ?>">
 			<?php
 			foreach ( $access_cards as $ac ) :
 				$a_url = get_term_link( $ac['term'] );
