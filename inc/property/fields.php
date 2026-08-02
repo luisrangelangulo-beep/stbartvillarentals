@@ -62,6 +62,14 @@ function lvc_register_property_fields() {
 
 		/* ── Media ────────────────────────────────────────────────── */
 		array( 'key' => 'field_lvc_tab_media', 'label' => 'Media', 'type' => 'tab' ),
+		/* ── Curated images ───────────────────────────────────────────
+		   Separate from the galleries on purpose. NOTHING derives these
+		   from gallery position — photo 01 is an arbitrary frame, and on
+		   Tulum all 46 populated properties ended up with the same shot
+		   as both card and hero. See docs/LESSONS_LEARNED.md §2. */
+		array( 'key' => 'field_lvc_feature_image', 'label' => 'Card Image', 'name' => 'feature_image', 'type' => 'url', 'instructions' => 'Curated image for grids, cards and social sharing. Always wins over the WordPress featured image.' ),
+		array( 'key' => 'field_lvc_hero_image', 'label' => 'Hero Image', 'name' => 'hero_image', 'type' => 'url', 'instructions' => 'Curated banner image for the single page. Pick a DIFFERENT shot from the card image.' ),
+
 		// Two galleries, matching the portfolio convention on every live site:
 		// `gallery_squares` is a curated short set rendered as a grid, and
 		// `gallery_slider` is the full shoot rendered as a carousel. Keep them
@@ -97,13 +105,6 @@ function lvc_register_property_fields() {
 		array( 'key' => 'field_lvc_included_items', 'label' => 'Included', 'name' => 'included_items', 'type' => 'textarea', 'rows' => 6, 'instructions' => 'One item per line. Commas are content here, so lines only.' ),
 		array( 'key' => 'field_lvc_on_request_items', 'label' => 'On Request', 'name' => 'on_request_items', 'type' => 'textarea', 'rows' => 6, 'instructions' => 'One item per line. Arranged but not included in the rate.' ),
 
-		/* ── Curated images ───────────────────────────────────────────
-		   Separate from the galleries on purpose. NOTHING derives these
-		   from gallery position — photo 01 is an arbitrary frame, and on
-		   Tulum all 46 populated properties ended up with the same shot
-		   as both card and hero. See docs/LESSONS_LEARNED.md §2. */
-		array( 'key' => 'field_lvc_feature_image', 'label' => 'Card Image', 'name' => 'feature_image', 'type' => 'url', 'instructions' => 'Curated image for grids, cards and social sharing. Always wins over the WordPress featured image.' ),
-		array( 'key' => 'field_lvc_hero_image', 'label' => 'Hero Image', 'name' => 'hero_image', 'type' => 'url', 'instructions' => 'Curated banner image for the single page. Pick a DIFFERENT shot from the card image.' ),
 
 		/* ── Rates & flags ────────────────────────────────────────── */
 		array( 'key' => 'field_lvc_nightly_rate_from', 'label' => 'Nightly Rate From', 'name' => 'nightly_rate_from', 'type' => 'number', 'instructions' => 'Numeric, no currency symbol. Used for sorting and schema, not printed as a promise.' ),
