@@ -91,14 +91,21 @@ if ( ! function_exists( 'lvc_config' ) ) {
 				'register_taxonomies' => true,
 
 				/* ── Page slugs (nav + internal links) ────────────────── */
-				// Intended slugs. NONE of these pages exist yet — the 15 pages on
-				// this domain belong to the previous project. Create them (and
-				// assign the matching page-templates/) before activating the
-				// theme, or the nav links 404.
+				// These MUST match the published pages exactly — lvc_page_url()
+				// builds links straight from them, so a mismatch is a silent 404
+				// in the nav rather than an error anywhere.
+				//
+				// Corrected 2026-08-01: 'request' said `villa-request` and 'about'
+				// said `about`, while the live pages are `st-barts-villa-request`
+				// and `about-us`. The request link — the inquiry page, i.e. the
+				// conversion target — was a hard 404 from the villa archive.
+				// Fixed here rather than by renaming the pages, because the pages
+				// are published and in the sitemap; changing config costs nothing
+				// while changing slugs would need redirects.
 				'pages' => array(
 					'contact'  => 'contact',
-					'request'  => 'villa-request',
-					'about'    => 'about',
+					'request'  => 'st-barts-villa-request',
+					'about'    => 'about-us',
 					'how'      => 'how-it-works',
 					'owners'   => 'list-your-villa',
 					'magazine' => 'magazine',
