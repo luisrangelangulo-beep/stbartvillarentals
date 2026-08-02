@@ -1324,7 +1324,7 @@ get_header();
 			if ( is_wp_error( $lvc_sib_url ) ) {
 				continue;
 			}
-			$lvc_sib_img   = (string) lvc_field( 'hero_image_url', 'term_' . $lvc_sib->term_id );
+			$lvc_sib_img   = lvc_priority_image_url( (string) lvc_field( 'hero_image_url', 'term_' . $lvc_sib->term_id ) );
 			$lvc_sib_diff  = (string) lvc_field( 'tagline', 'term_' . $lvc_sib->term_id );
 			$lvc_sib_count = (int) $lvc_sib->count;
 			?>

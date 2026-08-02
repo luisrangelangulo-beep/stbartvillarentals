@@ -158,7 +158,7 @@ while ( have_posts() ) :
 		$lvc_explore[] = array(
 			'url'    => $lvc_area_url,
 			'anchor' => 'Villas in ' . $lvc_area,
-			'image'  => (string) lvc_field( 'hero_image_url', 'term_' . $lvc_term->term_id ),
+			'image'  => lvc_priority_image_url( (string) lvc_field( 'hero_image_url', 'term_' . $lvc_term->term_id ) ),
 		);
 	}
 	$lvc_bed_terms = get_the_terms( $lvc_id, 'bedrooms' );
@@ -168,7 +168,7 @@ while ( have_posts() ) :
 			$lvc_explore[] = array(
 				'url'    => $lvc_bed_url,
 				'anchor' => $lvc_bed_terms[0]->name . ' in ' . lvc_config( 'region' ),
-				'image'  => (string) lvc_field( 'hero_image_url', 'term_' . $lvc_bed_terms[0]->term_id ),
+				'image'  => lvc_priority_image_url( (string) lvc_field( 'hero_image_url', 'term_' . $lvc_bed_terms[0]->term_id ) ),
 			);
 		}
 	}

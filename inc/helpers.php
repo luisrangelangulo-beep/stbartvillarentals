@@ -144,7 +144,11 @@ if ( ! function_exists( 'lvc_gallery_urls' ) ) {
 		}
 		$parts = array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', $raw ) ) );
 
-		return array_values( array_filter( $parts, static function ( $u ) {
+		// Paren-encoded for the same reason as lvc_property_image(): gallery URLs
+		// are painted as CSS backgrounds in the slider and square grid, and WP
+		// Rocket's lazyload truncates any url() containing a literal parenthesis.
+		// 16 of the 24 image URLs on a single villa page came from here.
+		return array_values( array_filter( array_map( 'lvc_priority_image_url', $parts ), static function ( $u ) {
 			return (bool) preg_match( '#^https?://#i', $u );
 		} ) );
 	}
