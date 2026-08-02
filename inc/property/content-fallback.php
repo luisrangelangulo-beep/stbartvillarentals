@@ -204,3 +204,40 @@ if ( ! function_exists( 'lvc_list_lines' ) ) {
 		return array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', $raw ) ) ) );
 	}
 }
+
+/**
+ * Nearest beach for a property: its own override, else its Area's default.
+ *
+ * Two tiers on purpose. Most villas in an area share a nearest beach, so the
+ * Area carries it and a villa only overrides when it is genuinely nearer a
+ * different one. Returns empty strings when neither tier is set, and the
+ * template renders nothing — no placeholder, no guess. A wrong beach name on a
+ * villa page is a credibility problem, not a cosmetic one.
+ *
+ * @return array{beach:string,note:string}
+ */
+if ( ! function_exists( 'lvc_nearby_beach' ) ) {
+	function lvc_nearby_beach( $post_id = null ) {
+		$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+		$beach   = trim( (string) lvc_field( 'nearby_beach', $post_id ) );
+		$note    = trim( (string) lvc_field( 'nearby_beach_note', $post_id ) );
+
+		if ( '' === $beach ) {
+			$terms = get_the_terms( $post_id, 'area' );
+			if ( $terms && ! is_wp_error( $terms ) ) {
+				$key   = 'term_' . $terms[0]->term_id;
+				$beach = trim( (string) lvc_field( 'primary_beach', $key ) );
+				if ( '' === $note ) {
+					$note = trim( (string) lvc_field( 'primary_beach_note', $key ) );
+				}
+			}
+		}
+
+		// A note without a beach has nothing to qualify.
+		if ( '' === $beach ) {
+			$note = '';
+		}
+
+		return array( 'beach' => $beach, 'note' => $note );
+	}
+}

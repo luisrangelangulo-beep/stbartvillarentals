@@ -80,6 +80,8 @@ function lvc_register_term_fields() {
 			array( 'key' => 'field_lvc_term_lat', 'label' => 'Latitude', 'name' => 'geo_lat', 'type' => 'text', 'instructions' => 'For schema areaServed / geo.' ),
 			array( 'key' => 'field_lvc_term_lng', 'label' => 'Longitude', 'name' => 'geo_lng', 'type' => 'text' ),
 			array( 'key' => 'field_lvc_term_parent_dest', 'label' => 'Parent Destination', 'name' => 'parent_destination', 'type' => 'text', 'instructions' => 'Areas only — the destination slug this area sits under (e.g. dominican-republic). Used for breadcrumbs/nav.' ),
+			array( 'key' => 'field_lvc_term_primary_beach', 'label' => 'Primary Beach', 'name' => 'primary_beach', 'type' => 'text', 'instructions' => 'The beach every villa in this area inherits as its nearest, e.g. "Flamands Beach". Leave BLANK for hillside or interior areas with no obvious nearest beach — blank renders nothing, which is better than a wrong beach on a villa page.' ),
+			array( 'key' => 'field_lvc_term_primary_beach_note', 'label' => 'Primary Beach — Note', 'name' => 'primary_beach_note', 'type' => 'text', 'maxlength' => 90, 'instructions' => 'Optional qualifier shown after the beach name, e.g. "a short drive". Do NOT invent walk times: a wrong "5-minute walk" is worse than no claim at all.' ),
 			...$lvc_depth_fields( 'place' ),
 		),
 		'location' => array(

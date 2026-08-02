@@ -39,6 +39,8 @@ function lvc_register_property_fields() {
 		array( 'key' => 'field_lvc_bed_count', 'label' => 'Bedrooms', 'name' => 'bed_count', 'type' => 'number', 'min' => 0, 'max' => 50 ),
 		array( 'key' => 'field_lvc_bath_count', 'label' => 'Bathrooms', 'name' => 'bath_count', 'type' => 'number', 'min' => 0, 'max' => 50, 'step' => '0.5' ),
 		array( 'key' => 'field_lvc_guests_max', 'label' => 'Max Guests', 'name' => 'guests_max', 'type' => 'number', 'min' => 1, 'max' => 100 ),
+		array( 'key' => 'field_lvc_nearby_beach', 'label' => 'Nearest Beach', 'name' => 'nearby_beach', 'type' => 'text', 'instructions' => 'Overrides the Area default only when this villa is genuinely nearer a different beach. Leave blank to inherit the Area — that is the normal case.' ),
+		array( 'key' => 'field_lvc_nearby_beach_note', 'label' => 'Nearest Beach — Note', 'name' => 'nearby_beach_note', 'type' => 'text', 'maxlength' => 90, 'instructions' => 'Optional qualifier, e.g. "steps from the sand". Only state a distance or walk time if it is known to be true for THIS villa.' ),
 		array(
 			'key' => 'field_lvc_from_rate_tier', 'label' => 'From Rate Tier', 'name' => 'from_rate_tier', 'type' => 'select',
 			'choices' => array( 'under-5k' => 'Under 5k', '5k-10k' => '5k-10k', '10k-20k' => '10k-20k', '20k-plus' => '20k-plus' ),

@@ -1389,6 +1389,14 @@ while ( have_posts() ) :
 	color: rgba(255,255,255,0.4);
 }
 
+.lvc-location__meta-note {
+	display: block;
+	font-size: 0.72rem;
+	font-weight: 300;
+	color: var(--lvc-muted);
+	margin-top: 0.15rem;
+}
+
 .lvc-location__meta-value {
 	font-size: 0.85rem;
 	color: rgba(255,255,255,0.85);
@@ -2197,6 +2205,17 @@ $lvc_has_faq    = ( is_array( $lvc_faq ) && count( $lvc_faq ) >= 2 );
 			<div class="lvc-location__meta-item">
 				<span class="lvc-location__meta-label">Max Guests</span>
 				<span class="lvc-location__meta-value"><?php echo esc_html( $lvc_guests ); ?></span>
+			</div>
+			<?php endif; ?>
+			<?php
+			// Nearest beach: villa override, else the Area default. Renders nothing
+			// when neither is set rather than guessing at a beach name.
+			$lvc_nb = function_exists( 'lvc_nearby_beach' ) ? lvc_nearby_beach( $lvc_id ) : array( 'beach' => '', 'note' => '' );
+			?>
+			<?php if ( '' !== $lvc_nb['beach'] ) : ?>
+			<div class="lvc-location__meta-item">
+				<span class="lvc-location__meta-label">Nearest Beach</span>
+				<span class="lvc-location__meta-value"><?php echo esc_html( $lvc_nb['beach'] ); ?><?php if ( '' !== $lvc_nb['note'] ) : ?><span class="lvc-location__meta-note"><?php echo esc_html( $lvc_nb['note'] ); ?></span><?php endif; ?></span>
 			</div>
 			<?php endif; ?>
 		</div>
