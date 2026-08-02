@@ -58,7 +58,7 @@ $lvc_plural   = $lvc_obj ? $lvc_obj->labels->name : ucfirst( $lvc_tax );
 
 // ── Term ACF fields (UNPREFIXED names — see inc/property/term-fields.php) ──
 $lvc_intro   = lvc_field( 'intro', $lvc_key, term_description() );
-$lvc_hero    = (string) lvc_field( 'hero_image_url', $lvc_key );
+$lvc_hero    = lvc_priority_image_url( (string) lvc_field( 'hero_image_url', $lvc_key ) );
 $lvc_tagline = (string) lvc_field( 'tagline', $lvc_key );
 $lvc_body    = lvc_field( 'body', $lvc_key );
 
@@ -76,7 +76,7 @@ $lvc_show_faq = ( count( $lvc_faq ) >= 2 );
 // ── Hero image fallback chain: term hero → homepage hero → live villa image ──
 $lvc_hero_bg = $lvc_hero;
 if ( '' === $lvc_hero_bg ) {
-	$lvc_hero_bg = (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) );
+	$lvc_hero_bg = lvc_priority_image_url( (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) ) );
 }
 if ( '' === $lvc_hero_bg ) {
 	$lvc_hero_bg = ''; // No brand hero yet — sections guard on empty and fall back to a dark surface.

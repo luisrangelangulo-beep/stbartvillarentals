@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // would have published another island's property as this site's hero image.
 // Sections guard on empty and fall back to a dark surface, which is the honest
 // state until a St Barts hero is set on the front page.
-$hero_image = (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) );
+$hero_image = lvc_priority_image_url( (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) ) );
 
 // The CPT name is config, not a constant — theme-config.php offers villa,
 // chalet, condo or property, so reading it here is what keeps this template
@@ -56,7 +56,7 @@ $area_terms = is_wp_error( $area_terms ) ? array() : $area_terms;
 $featured_areas = array();
 $compact_areas  = array();
 foreach ( $area_terms as $t ) {
-	$img = (string) lvc_field( 'hero_image_url', 'term_' . $t->term_id );
+	$img = lvc_priority_image_url( (string) lvc_field( 'hero_image_url', 'term_' . $t->term_id ) );
 	if ( count( $featured_areas ) < 2 && '' !== $img ) {
 		$featured_areas[] = array( 'term' => $t, 'image' => $img );
 		continue;
@@ -86,7 +86,7 @@ foreach ( $size_terms as $t ) {
 	}
 	$size_cards[] = array(
 		'term'  => $t,
-		'image' => (string) lvc_field( 'hero_image_url', 'term_' . $t->term_id ),
+		'image' => lvc_priority_image_url( (string) lvc_field( 'hero_image_url', 'term_' . $t->term_id ) ),
 	);
 }
 // Imaged cards lead; the first card spans full width (THV pattern).

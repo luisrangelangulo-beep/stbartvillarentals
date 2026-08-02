@@ -119,7 +119,7 @@ if ( ! function_exists( 'lvc_property_image' ) ) {
 			$img = get_the_post_thumbnail_url( $post_id, $size );
 		}
 
-		return $img ? esc_url( $img ) : '';
+		return $img ? lvc_priority_image_url( esc_url( $img ) ) : '';
 	}
 }
 
@@ -161,6 +161,26 @@ if ( ! function_exists( 'lvc_field' ) ) {
 		}
 		$value = get_field( $name, $post_id );
 		return ( null === $value || '' === $value || array() === $value ) ? $default : $value;
+	}
+}
+
+/**
+ * Percent-encode parentheses so a URL survives a CSS url() parser.
+ *
+ * WP Rocket's lazyload/critical-image parser treats a literal parenthesis in a
+ * filename as the end of CSS url(), truncating the URL into data-bg and spilling
+ * the tail into the style attribute — the image then never loads. %28/%29 are
+ * HTTP-equivalent, so the request is identical and the parser has nothing to
+ * choke on. Applied at the source (lvc_property_image, lvc_blog_image_url, hero
+ * field reads) rather than at each of the ~14 emit points, so preload hints and
+ * CSS backgrounds stay byte-identical and no emit point can be missed.
+ *
+ * Ported from costalegre-repo/inc/perf/hero-preload.php, where this was first
+ * diagnosed. Apply AFTER esc_url(), which leaves parens untouched.
+ */
+if ( ! function_exists( 'lvc_priority_image_url' ) ) {
+	function lvc_priority_image_url( $url ) {
+		return str_replace( array( '(', ')' ), array( '%28', '%29' ), (string) $url );
 	}
 }
 

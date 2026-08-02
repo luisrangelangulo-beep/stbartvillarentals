@@ -75,7 +75,7 @@ $whatsapp    = (string) lvc_config( 'whatsapp_url', '' );
 
 // Hero image â€” same single source as the homepage hero (ACF on the front page),
 // with the same live-image fallback. No THV stock imagery.
-$hero_image = (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) );
+$hero_image = lvc_priority_image_url( (string) lvc_field( 'home_hero_image_url', (int) get_option( 'page_on_front' ) ) );
 if ( '' === $hero_image ) {
 	$hero_image = ''; // No brand hero yet — sections guard on empty and fall back to a dark surface.
 }

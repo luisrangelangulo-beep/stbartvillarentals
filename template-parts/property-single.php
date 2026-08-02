@@ -101,7 +101,7 @@ while ( have_posts() ) :
 	// nothing survives, the hero renders its dark-gradient fallback.
 	$lvc_hero = lvc_property_image( $lvc_id, 'full', 'hero' );
 	if ( ! $lvc_hero && $lvc_squares ) {
-		$lvc_hero = $lvc_squares[0];
+		$lvc_hero = lvc_priority_image_url( $lvc_squares[0] );
 	}
 
 	$lvc_wa    = lvc_whatsapp_url();

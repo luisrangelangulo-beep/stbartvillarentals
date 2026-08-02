@@ -58,11 +58,11 @@ if ( ! function_exists( 'lvc_blog_image_url' ) ) {
 	function lvc_blog_image_url( $post_id, $size = 'large' ) {
 		$image_url = trim( (string) lvc_field( 'blog_media_image_url', $post_id ) );
 		if ( '' !== $image_url ) {
-			return $image_url;
+			return lvc_priority_image_url( $image_url );
 		}
 
 		$image_url = get_the_post_thumbnail_url( $post_id, $size );
-		return $image_url ? (string) $image_url : '';
+		return $image_url ? lvc_priority_image_url( (string) $image_url ) : '';
 	}
 }
 
