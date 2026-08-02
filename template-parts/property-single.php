@@ -1117,34 +1117,34 @@ while ( have_posts() ) :
 	map: a slug map cloned between sites silently mis-sorts every term the
 	origin site did not happen to have.
 	═══════════════════════════════════════════════════════════════════════ */
-.lvc-amenities {
+.lvc-villa-amenities {
 	background: var(--lvc-bg2);
 	padding: 4rem 2rem;
 	border-top: 1px solid var(--lvc-border);
 	border-bottom: 1px solid var(--lvc-border);
 }
 
-.lvc-amenities__inner {
+.lvc-villa-amenities__inner {
 	max-width: 1600px;
 	margin: 0 auto;
 }
 
-.lvc-amenities__header {
+.lvc-villa-amenities__header {
 	margin-bottom: 2.5rem;
 }
 
-.lvc-amenities__categories {
+.lvc-villa-amenities__categories {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	gap: 2rem;
 }
 
 @media (max-width: 640px) {
-	.lvc-amenities__categories { grid-template-columns: 1fr 1fr; }
+	.lvc-villa-amenities__categories { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 420px) {
-	.lvc-amenities__categories { grid-template-columns: 1fr; }
+	.lvc-villa-amenities__categories { grid-template-columns: 1fr; }
 }
 
 .lvc-amenity-category__title {
@@ -2127,13 +2127,13 @@ if ( $lvc_amenities && ! is_wp_error( $lvc_amenities ) ) :
 		$lvc_grouped['Features'] = $lvc_ungrouped;
 	}
 	?>
-<section class="lvc-amenities" aria-label="Villa amenities">
-	<div class="lvc-amenities__inner">
-		<header class="lvc-amenities__header">
+<section class="lvc-villa-amenities" aria-label="Villa amenities">
+	<div class="lvc-villa-amenities__inner">
+		<header class="lvc-villa-amenities__header">
 			<span class="lvc-label">Villa Highlights</span>
 			<h2 class="lvc-heading">Amenities &amp; Features</h2>
 		</header>
-		<div class="lvc-amenities__categories">
+		<div class="lvc-villa-amenities__categories">
 			<?php foreach ( $lvc_grouped as $lvc_cat_name => $lvc_items ) : ?>
 				<?php if ( ! $lvc_items ) { continue; } ?>
 			<div class="lvc-amenity-category">
