@@ -93,7 +93,36 @@ foreach ( $size_terms as $t ) {
 usort( $size_cards, function ( $a, $b ) {
 	return ( '' === $a['image'] ) <=> ( '' === $b['image'] );
 } );
-$size_cards = array_slice( $size_cards, 0, 5 );
+$size_cards = array_slice( $size_cards, 0, 6 );
+
+// Beach access band. Same component and the same indexability rule as the size
+// band: a term under min_index_count is noindexed, so linking it from the
+// homepage would point at a page we are telling Google to ignore.
+$access_cards = array();
+if ( taxonomy_exists( 'beach_access' ) ) {
+	$access_terms = get_terms(
+		array(
+			'taxonomy'   => 'beach_access',
+			'hide_empty' => true,
+			'orderby'    => 'count',
+			'order'      => 'DESC',
+		)
+	);
+	$access_terms = is_wp_error( $access_terms ) ? array() : $access_terms;
+	foreach ( $access_terms as $t ) {
+		if ( (int) $t->count < (int) lvc_config( 'min_index_count', 3 ) ) {
+			continue;
+		}
+		$access_cards[] = array(
+			'term'  => $t,
+			'image' => lvc_priority_image_url( (string) lvc_field( 'hero_image_url', 'term_' . $t->term_id ) ),
+		);
+	}
+	usort( $access_cards, function ( $a, $b ) {
+		return ( '' === $a['image'] ) <=> ( '' === $b['image'] );
+	} );
+	$access_cards = array_slice( $access_cards, 0, 6 );
+}
 
 // Featured villas: villas WITH a featured image lead while most photo sets
 // are still uploading; falls back to recent villas if fewer than six.
@@ -416,11 +445,10 @@ get_header();
 .lvc-experiences__header { text-align: center; margin-bottom: 3.5rem; }
 .lvc-experiences__title { font-family: var(--lvc-fd); font-size: clamp(1.75rem, 3vw, 2.75rem); font-weight: 400; color: var(--lvc-text); margin: 0; line-height: 1.15; }
 .lvc-experiences__title em { font-style: italic; color: var(--lvc-accent); }
-.lvc-experiences__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.75rem; max-width: 1600px; margin: 0 auto; }
-.lvc-experiences__grid .lvc-exp-card:nth-child(1) { grid-column: 1 / -1; }
+.lvc-experiences__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; max-width: 1600px; margin: 0 auto; }
 .lvc-exp-card {
 	position       : relative;
-	height         : 420px;
+	height         : 280px;
 	overflow       : hidden;
 	display        : flex;
 	flex-direction : column;
@@ -434,9 +462,9 @@ get_header();
 .lvc-exp-card:hover .lvc-exp-card__bg { transform: scale(1.05); }
 .lvc-exp-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-color: rgba(194,129,140,0.15); }
 .lvc-exp-card__overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(18,16,15,0.1) 0%, rgba(18,16,15,0.9) 100%); z-index: 1; }
-.lvc-exp-card__body { position: relative; z-index: 2; padding: 2rem; }
-.lvc-exp-card__label { font-family: var(--lvc-fd); font-size: 1.5rem; font-weight: 400; color: #fff; margin: 0 0 0.5rem 0; line-height: 1.15; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
-.lvc-exp-card__desc { font-size: 0.82rem; color: var(--lvc-text); opacity: 0.8; line-height: 1.65; margin: 0 0 1rem 0; }
+.lvc-exp-card__body { position: relative; z-index: 2; padding: 1.35rem; }
+.lvc-exp-card__label { font-family: var(--lvc-fd); font-size: 1.15rem; font-weight: 400; color: #fff; margin: 0 0 0.5rem 0; line-height: 1.15; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.lvc-exp-card__desc { font-size: 0.76rem; color: var(--lvc-text); opacity: 0.8; line-height: 1.65; margin: 0 0 1rem 0; }
 .lvc-exp-card__cta { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lvc-accent); font-weight: 500; }
 
 /* ── FEATURED VILLAS ───────────────────────────────────────────────────── */
@@ -860,6 +888,44 @@ get_header();
 	</div>
 </section>
 <?php endif; ?>
+
+<!-- ═══ SECTION 4b: BROWSE BY BEACH ACCESS ═══ -->
+<?php if ( ! empty( $access_cards ) ) : ?>
+<section class="lvc-experiences lvc-experiences--access">
+	<div class="lvc-experiences__inner">
+
+		<div class="lvc-experiences__header">
+			<p class="lvc-eyebrow lvc-eyebrow--center">Browse by Beach Access</p>
+			<h2 class="lvc-experiences__title">Choose Your <em>Position on the Water</em></h2>
+		</div>
+
+		<div class="lvc-experiences__grid">
+			<?php
+			foreach ( $access_cards as $ac ) :
+				$a_url = get_term_link( $ac['term'] );
+				if ( is_wp_error( $a_url ) ) {
+					continue;
+				}
+				$a_count = (int) $ac['term']->count;
+				?>
+			<a href="<?php echo esc_url( $a_url ); ?>" class="lvc-exp-card">
+				<?php if ( $ac['image'] ) : ?>
+				<div class="lvc-exp-card__bg" style="background-image:url('<?php echo esc_url( $ac['image'] ); ?>')"></div>
+				<?php endif; ?>
+				<div class="lvc-exp-card__overlay"></div>
+				<div class="lvc-exp-card__body">
+					<h3 class="lvc-exp-card__label"><?php echo esc_html( $ac['term']->name ); ?></h3>
+					<p class="lvc-exp-card__desc"><?php echo esc_html( (string) $a_count ); ?> <?php echo ( 1 === $a_count ) ? 'villa' : 'villas'; ?> with this beach access.</p>
+					<span class="lvc-exp-card__cta">Browse &#x2192;</span>
+				</div>
+			</a>
+			<?php endforeach; ?>
+		</div>
+
+	</div>
+</section>
+<?php endif; ?>
+
 
 
 <!-- ═══ SECTION 5: WHY BOOK DIRECT ═══ -->

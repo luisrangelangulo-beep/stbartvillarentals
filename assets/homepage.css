@@ -124,17 +124,7 @@
 	font-weight   : 500;
 }
 .lvc-hero__eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--lvc-accent); opacity: 0.6; }
-.lvc-hero__h1 {
-	font-family   : var(--lvc-fd);
-	font-size     : clamp(2.75rem, 6vw, 5.5rem);
-	font-weight   : 400;
-	line-height   : 1;
-	letter-spacing: -0.01em;
-	color         : #fff;
-	margin        : 0 0 1.25rem 0;
-	max-width     : 820px;
-	text-shadow   : 0 2px 24px rgba(0,0,0,0.4);
-}
+
 .lvc-hero__h1 em { font-style: italic; color: var(--lvc-accent); }
 .lvc-hero__divider { width: 60px; height: 1px; background: var(--lvc-accent); margin: 1.5rem 0; opacity: 0.7; }
 .lvc-hero__intro { font-size: 1.05rem; color: rgba(255,255,255,0.72); line-height: 1.75; max-width: 600px; margin: 0 0 2.5rem 0; font-weight: 300; }
@@ -173,7 +163,6 @@
 	transition    : all 0.2s;
 }
 .lvc-hero__route:hover { border-color: rgba(194,129,140,0.5); color: var(--lvc-accent); }
-
 
 /* â”€â”€ VILLA FINDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .lvc-search {
@@ -327,7 +316,7 @@
 .lvc-villas__see-all:hover { color: var(--lvc-accent); border-color: var(--lvc-accent); }
 
 .lvc-villa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: stretch; }
-.lvc-villa-card { background: var(--lvc-bg); border: 1px solid var(--lvc-border); overflow: hidden; display: flex; flex-direction: column; height: 100%; transition: all 0.3s var(--lvc-ease); border-radius: 4px; }
+
 .lvc-villa-card:hover { border-color: var(--lvc-accent); transform: translateY(-4px); box-shadow: var(--lvc-shadow-h); }
 .lvc-villa-card__img {
 	height              : 240px;
@@ -386,7 +375,7 @@
 
 /* â”€â”€ INQUIRY / FINAL CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .lvc-inquiry { padding: 6rem var(--lvc-px); background: var(--lvc-bg); border-top: 1px solid var(--lvc-border); }
-.lvc-inquiry__inner { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
 .lvc-inquiry__left h2 { font-family: var(--lvc-fd); font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 400; line-height: 1.1; margin: 0 0 1rem 0; color: var(--lvc-text); }
 .lvc-inquiry__left h2 em { font-style: italic; color: var(--lvc-accent); }
 .lvc-inquiry__left p { font-size: 0.92rem; color: var(--lvc-soft); line-height: 1.8; margin: 0 0 2rem 0; }
@@ -476,5 +465,4 @@
 	.lvc-search__submit     { width: 100%; }
 	.lvc-villa-card:nth-child(n+4) { display: none; }
 }
-
 
