@@ -895,76 +895,6 @@ get_header();
 }
 
 /* Shared inquiry-form part (.lvc-form markup), styled to the THV form spec. */
-.lvc-inquiry .lvc-form { display: flex; flex-direction: column; gap: 1.1rem; }
-.lvc-inquiry .lvc-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.lvc-inquiry .lvc-form__group { display: flex; flex-direction: column; gap: 6px; }
-.lvc-inquiry .lvc-form__group label {
-	font-size     : 0.62rem;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color         : var(--lvc-accent);
-	opacity       : 0.9;
-	font-family   : var(--lvc-fb);
-	font-weight   : 500;
-}
-.lvc-inquiry .lvc-form__group input,
-.lvc-inquiry .lvc-form__group select,
-.lvc-inquiry .lvc-form__group textarea {
-	background        : rgba(255,255,255,0.04);
-	border            : 1px solid rgba(245,240,234,0.06);
-	color             : var(--lvc-text);
-	font-family       : var(--lvc-fb);
-	font-size         : 0.875rem;
-	font-weight       : 300;
-	padding           : 13px 15px;
-	outline           : none;
-	transition        : border-color 0.2s;
-	width             : 100%;
-	-webkit-appearance: none;
-	border-radius     : 4px;
-}
-.lvc-inquiry .lvc-form__group input::placeholder,
-.lvc-inquiry .lvc-form__group textarea::placeholder { color: var(--lvc-muted); }
-.lvc-inquiry .lvc-form__group input:focus,
-.lvc-inquiry .lvc-form__group select:focus,
-.lvc-inquiry .lvc-form__group textarea:focus { border-color: rgba(194,129,140,0.4); background: rgba(245,240,234,0.06); }
-.lvc-inquiry .lvc-form__group select {
-	background-image   : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237d948d' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-	background-repeat  : no-repeat;
-	background-position: right 14px center;
-	padding-right      : 36px;
-	cursor             : pointer;
-}
-.lvc-inquiry .lvc-form__group textarea { resize: vertical; min-height: 110px; }
-.lvc-inquiry .lvc-form__hp {
-	position: absolute !important;
-	left    : -9999px !important;
-	width   : 1px; height: 1px;
-	opacity : 0;
-	overflow: hidden;
-}
-.lvc-inquiry .lvc-form__submit {
-	display        : inline-flex;
-	align-items    : center;
-	justify-content: center;
-	width          : 100%;
-	padding        : 1.1rem;
-	background     : var(--lvc-accent);
-	color          : #12100f;
-	font-family    : var(--lvc-fb);
-	font-size      : 0.75rem;
-	font-weight    : 500;
-	letter-spacing : 0.1em;
-	text-transform : uppercase;
-	border         : none;
-	border-radius  : 4px;
-	cursor         : pointer;
-	transition     : all 0.25s var(--lvc-ease);
-	margin-top     : 0.25rem;
-}
-.lvc-inquiry .lvc-form__submit:hover { background: var(--lvc-accent-h); }
-.lvc-inquiry .lvc-form__status { font-size: 0.82rem; color: var(--lvc-soft); margin: 0; min-height: 1em; }
-.lvc-inquiry .lvc-form__micro  { font-size: 0.72rem; color: var(--lvc-muted); margin: 0; text-align: center; }
 
 .lvc-inquiry__wa {
 	display        : inline-flex;
@@ -1050,7 +980,6 @@ get_header();
 	.lvc-villa-grid        { grid-template-columns: 1fr; }
 	.lvc-siblings__grid    { grid-template-columns: 1fr; }
 	.lvc-inquiry__inner    { grid-template-columns: 1fr; gap: 2.5rem; }
-	.lvc-inquiry .lvc-form__row { grid-template-columns: 1fr; }
 	.lvc-villas__header    { flex-direction: column; align-items: flex-start; }
 	.lvc-final__trust      { gap: 1.25rem; flex-direction: column; align-items: center; }
 	.lvc-final__actions    { flex-direction: column; width: 100%; }
@@ -1108,7 +1037,6 @@ get_header();
 	</div>
 </section>
 
-
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 2: PART OF THE COLLECTION BAND
 	═══════════════════════════════════════════════════════════════════════ -->
@@ -1128,7 +1056,6 @@ get_header();
 </section>
 <?php endif; ?>
 
-
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 2B: ABOUT (term intro — falls back to term_description)
 	═══════════════════════════════════════════════════════════════════════ -->
@@ -1143,7 +1070,6 @@ get_header();
 	</div>
 </section>
 <?php endif; ?>
-
 
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 3: VILLA GRID (main query — pagination-safe)
@@ -1249,7 +1175,6 @@ get_header();
 	</div>
 </section>
 
-
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 3B: BODY COPY (below the grid)
 	═══════════════════════════════════════════════════════════════════════ -->
@@ -1260,7 +1185,6 @@ get_header();
 	</div>
 </section>
 <?php endif; ?>
-
 
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 4: FAQ (2+ complete rows required; FAQPage schema via lvc_jsonld)
@@ -1302,7 +1226,6 @@ get_header();
 	);
 	?>
 <?php endif; ?>
-
 
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 5: OTHER TERMS IN THIS TAXONOMY
@@ -1365,7 +1288,6 @@ get_header();
 </section>
 <?php endif; ?>
 
-
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 6: INQUIRY FORM (shared template part — AJAX + Turnstile)
 	═══════════════════════════════════════════════════════════════════════ -->
@@ -1408,7 +1330,6 @@ get_header();
 
 	</div>
 </section>
-
 
 <!-- ═══════════════════════════════════════════════════════════════════════
 	SECTION 7: FINAL CTA
