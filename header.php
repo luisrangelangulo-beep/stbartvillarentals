@@ -149,6 +149,9 @@ body.lvc-menu-open { overflow: hidden; }
 	background: transparent;
 	transition: all 0.3s ease;
 	padding: 1.25rem 0;
+	backdrop-filter: blur(12px); /* folded from brand.css */
+	-webkit-backdrop-filter: blur(12px); /* folded from brand.css */
+	border-bottom: 1px solid var(--lvc-border); /* folded from brand.css */
 }
 
 .lvc-header--scrolled {
@@ -177,6 +180,9 @@ body.lvc-menu-open { overflow: hidden; }
 	grid-template-columns: auto 1fr auto; /* logo | nav | actions */
 	align-items: center;
 	gap: clamp(14px, 2vw, 34px);
+	margin: 0 auto; /* folded from brand.css */
+	align-items: center; /* folded from brand.css */
+	justify-content: space-between; /* folded from brand.css */
 }
 
 /* Logo */

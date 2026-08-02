@@ -83,26 +83,6 @@
 }
 
 /* Eyebrow + heading — Tulum's signature section opener. */
-.lvc-eyebrow {
-	display: block;
-	font-family: var(--lvc-font-body);
-	font-size: 0.68rem;
-	font-weight: 500;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: var(--lvc-accent-bright);
-	margin: 0 0 0.9rem;
-}
-.lvc-eyebrow::before {
-	content: '';
-	display: inline-block;
-	width: 26px;
-	height: 1px;
-	margin-right: 0.7rem;
-	vertical-align: middle;
-	background: var(--lvc-accent);
-	opacity: 0.7;
-}
 
 .lvc-sec-title {
 	font-family: var(--lvc-font-display);
@@ -154,24 +134,7 @@
 }
 
 /* ═══ HEADER ═════════════════════════════════════════════════════════════ */
-.lvc-header {
-	position: sticky;
-	top: 0;
-	z-index: 900;
-	background: rgba(18, 16, 15, 0.94);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border-bottom: 1px solid var(--lvc-border);
-}
-.lvc-header__inner {
-	max-width: var(--lvc-max);
-	margin: 0 auto;
-	padding: 0.9rem var(--lvc-pad);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1.25rem;
-}
+
 .lvc-header__brand { text-decoration: none; display: flex; flex-direction: column; }
 .lvc-header__name {
 	font-family: var(--lvc-font-display);
@@ -364,24 +327,7 @@
 	background: var(--lvc-surface);
 }
 .lvc-slider__slide img { width: 100%; height: 100%; object-fit: cover; }
-.lvc-slider__nav {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 46px;
-	height: 46px;
-	display: grid;
-	place-items: center;
-	font-size: 1.5rem;
-	line-height: 1;
-	color: var(--lvc-text);
-	background: rgba(18, 16, 15, 0.75);
-	border: 1px solid var(--lvc-border);
-	border-radius: 50%;
-	cursor: pointer;
-	backdrop-filter: blur(6px);
-	transition: background 0.2s, border-color 0.2s, opacity 0.2s;
-}
+
 .lvc-slider__nav:hover { background: var(--lvc-accent); border-color: var(--lvc-accent); color: #1a1210; }
 .lvc-slider__nav:disabled { opacity: 0.3; cursor: default; }
 .lvc-slider__nav--prev { left: 1rem; }
@@ -483,7 +429,7 @@
 .lvc-archive__count { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--lvc-text-soft); margin: 0 0 1.75rem; }
 
 /* ═══ FAQ ════════════════════════════════════════════════════════════════ */
-.lvc-faq { max-width: var(--lvc-max-narrow); }
+
 .lvc-faq__item { padding: 1.35rem 0; border-bottom: 1px solid var(--lvc-border); }
 .lvc-faq__q { font-family: var(--lvc-font-display); font-size: 1.1rem; font-weight: 400; color: var(--lvc-text); margin: 0 0 0.55rem; }
 .lvc-faq__a { margin: 0; color: var(--lvc-text-muted); }

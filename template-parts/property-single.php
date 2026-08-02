@@ -1001,6 +1001,7 @@ while ( have_posts() ) :
 	border-radius: 50%;
 	cursor: pointer;
 	transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+	backdrop-filter: blur(6px); /* folded from brand.css */
 }
 
 .lvc-slider__nav:hover {

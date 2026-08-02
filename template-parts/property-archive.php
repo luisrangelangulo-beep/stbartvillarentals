@@ -139,6 +139,8 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 	color         : var(--lvc-accent);
 	margin-bottom : 0.85rem;
 	font-weight   : 500;
+	font-family: var(--lvc-font-body); /* folded from brand.css */
+	margin: 0 0 0.9rem; /* folded from brand.css */
 }
 .lvc-eyebrow::before {
 	content   : '';
@@ -146,6 +148,9 @@ if ( function_exists( 'lvc_schema_collection' ) ) {
 	background: var(--lvc-accent);
 	opacity   : 0.5;
 	flex-shrink: 0;
+	display: inline-block; /* folded from brand.css */
+	margin-right: 0.7rem; /* folded from brand.css */
+	vertical-align: middle; /* folded from brand.css */
 }
 
 /* HERO */

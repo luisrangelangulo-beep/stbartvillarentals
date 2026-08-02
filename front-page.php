@@ -176,8 +176,13 @@ get_header();
 	margin-bottom  : 0.85rem;
 	font-weight    : 500;
 	font-family    : var(--lvc-fb);
+	margin: 0 0 0.9rem; /* folded from brand.css */
 }
-.lvc-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--lvc-accent); opacity: 0.5; flex-shrink: 0; }
+.lvc-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--lvc-accent); opacity: 0.5; flex-shrink: 0;
+	display: inline-block; /* folded from brand.css */
+	margin-right: 0.7rem; /* folded from brand.css */
+	vertical-align: middle; /* folded from brand.css */
+}
 .lvc-eyebrow--center { justify-content: center; }
 .lvc-eyebrow--center::before { display: none; }
 

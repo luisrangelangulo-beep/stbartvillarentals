@@ -184,6 +184,7 @@ get_header();
 	margin-bottom  : 0.85rem;
 	font-family    : var(--lvc-fb);
 	font-weight    : 500;
+	margin: 0 0 0.9rem; /* folded from brand.css */
 }
 .lvc-eyebrow::before {
 	content    : '';
@@ -191,6 +192,9 @@ get_header();
 	background : var(--lvc-accent);
 	opacity    : 0.5;
 	flex-shrink: 0;
+	display: inline-block; /* folded from brand.css */
+	margin-right: 0.7rem; /* folded from brand.css */
+	vertical-align: middle; /* folded from brand.css */
 }
 
 .lvc-btn-accent {
@@ -658,6 +662,7 @@ get_header();
 	padding   : 6rem var(--lvc-px);
 	background: var(--lvc-bg2);
 	border-top: 1px solid var(--lvc-border);
+	max-width: var(--lvc-max-narrow); /* folded from brand.css */
 }
 .lvc-faq__inner { max-width: 860px; margin: 0 auto; }
 .lvc-faq__header { text-align: center; margin-bottom: 3rem; }
