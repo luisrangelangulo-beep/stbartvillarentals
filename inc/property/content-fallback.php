@@ -156,6 +156,23 @@ if ( ! function_exists( 'lvc_property_faq' ) ) {
 			return $rows;
 		}
 
+		// Flat pairs — what the sheet sync and the villa importer actually write.
+		// fields.php defines faq_q1..faq_a4 on the villa and calls the repeater
+		// above "preferred", but without this branch an imported villa fell
+		// straight through to the universal set: on St Barts all 75 villas held
+		// four complete pairs and not one ever rendered, in the FAQ section or in
+		// FAQPage schema.
+		for ( $i = 1; $i <= 4; $i++ ) {
+			$q = trim( (string) lvc_field( 'faq_q' . $i, $post_id ) );
+			$a = trim( (string) lvc_field( 'faq_a' . $i, $post_id ) );
+			if ( '' !== $q && '' !== $a ) {
+				$rows[] = array( 'question' => $q, 'answer' => $a );
+			}
+		}
+		if ( $rows ) {
+			return $rows;
+		}
+
 		// Universal fallback — flat q/a pairs, editable on the options page.
 		if ( function_exists( 'get_field' ) ) {
 			for ( $i = 1; $i <= 5; $i++ ) {
