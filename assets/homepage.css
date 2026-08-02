@@ -273,8 +273,6 @@
 .lvc-experiences__header { text-align: center; margin-bottom: 3.5rem; }
 .lvc-experiences__title { font-family: var(--lvc-fd); font-size: clamp(1.75rem, 3vw, 2.75rem); font-weight: 400; color: var(--lvc-text); margin: 0; line-height: 1.15; }
 .lvc-experiences__title em { font-style: italic; color: var(--lvc-accent); }
-.lvc-experiences__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.75rem; max-width: 1600px; margin: 0 auto; }
-.lvc-experiences__grid .lvc-exp-card:nth-child(1) { grid-column: 1 / -1; }
 .lvc-exp-card {
 	position       : relative;
 	height         : 420px;
@@ -428,8 +426,6 @@
 }
 @media (max-width: 1024px) {
 	.lvc-dest-grid          { grid-template-columns: 1fr; }
-	.lvc-experiences__grid  { grid-template-columns: repeat(2, 1fr); }
-	.lvc-experiences__grid .lvc-exp-card:nth-child(1) { grid-column: 1 / -1; }
 	.lvc-villa-grid         { grid-template-columns: repeat(2, 1fr); }
 	.lvc-area-grid          { grid-template-columns: repeat(2, 1fr); }
 	.lvc-why__inner         { gap: 3rem; }
@@ -451,8 +447,6 @@
 	.lvc-search__inner      { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.lvc-search__intro      { grid-column: 1 / -1; padding-right: 0; }
 	.lvc-search__submit     { align-self: end; }
-	.lvc-experiences__grid  { grid-template-columns: 1fr; }
-	.lvc-experiences__grid .lvc-exp-card:nth-child(1) { grid-column: auto; }
 	.lvc-villa-grid         { grid-template-columns: 1fr; }
 	.lvc-area-grid          { grid-template-columns: 1fr; }
 	.lvc-why__inner         { grid-template-columns: 1fr; gap: 2.5rem; }

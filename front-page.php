@@ -601,7 +601,6 @@ get_header();
 @media (max-width: 1024px) {
 	.lvc-dest-grid          { grid-template-columns: 1fr; }
 	.lvc-experiences__grid  { grid-template-columns: repeat(2, 1fr); }
-	.lvc-experiences__grid .lvc-exp-card:nth-child(1) { grid-column: 1 / -1; }
 	.lvc-villa-grid         { grid-template-columns: repeat(2, 1fr); }
 	.lvc-area-grid          { grid-template-columns: repeat(2, 1fr); }
 	.lvc-why__inner         { gap: 3rem; }
@@ -624,7 +623,6 @@ get_header();
 	.lvc-search__intro      { grid-column: 1 / -1; padding-right: 0; }
 	.lvc-search__submit     { align-self: end; }
 	.lvc-experiences__grid  { grid-template-columns: 1fr; }
-	.lvc-experiences__grid .lvc-exp-card:nth-child(1) { grid-column: auto; }
 	.lvc-villa-grid         { grid-template-columns: 1fr; }
 	.lvc-area-grid          { grid-template-columns: 1fr; }
 	.lvc-why__inner         { grid-template-columns: 1fr; gap: 2.5rem; }
