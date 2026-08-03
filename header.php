@@ -64,6 +64,11 @@ $lvc_nav_items = array(
 		'slug'  => (string) lvc_config( 'cpt_archive_slug', 'luxury-villas' ),
 	),
 	array(
+		'label' => 'Areas',
+		'url'   => lvc_page_url( 'areas' ),
+		'slug'  => isset( $lvc_pages['areas'] ) ? (string) $lvc_pages['areas'] : 'areas',
+	),
+	array(
 		'label' => 'About',
 		'url'   => lvc_page_url( 'about' ),
 		'slug'  => isset( $lvc_pages['about'] ) ? (string) $lvc_pages['about'] : 'about',
@@ -96,7 +101,11 @@ $lvc_current_slug  = ( $lvc_current_post instanceof WP_Post ) ? $lvc_current_pos
 $lvc_request_path  = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- path only, escaped on output.
 $lvc_path_segments = explode( '/', trim( $lvc_request_path, '/' ) );
 $lvc_first_segment = isset( $lvc_path_segments[0] ) ? $lvc_path_segments[0] : '';
-$lvc_villas_ctx    = is_post_type_archive( 'villa' ) || is_singular( 'villa' ) || is_tax( array( 'area', 'bedrooms', 'beach_access', 'collection' ) );
+// `area` split out of $lvc_villas_ctx into its own flag now that "Areas" is a
+// standalone nav item — without this, visiting an /area/{term}/ page would light
+// up "Villas" while "Areas" never activates, which reads as a wrong active state.
+$lvc_villas_ctx = is_post_type_archive( 'villa' ) || is_singular( 'villa' ) || is_tax( array( 'bedrooms', 'beach_access', 'collection' ) );
+$lvc_areas_ctx  = is_tax( 'area' ) || is_page( 'areas' );
 
 $lvc_whatsapp    = lvc_whatsapp_url();
 $lvc_request_url = lvc_page_url( 'request' );
@@ -646,7 +655,7 @@ body.lvc-menu-open { overflow: hidden; }
 				) );
 			} else {
 				foreach ( $lvc_nav_items as $lvc_item ) {
-					$lvc_is_active = ( $lvc_first_segment === $lvc_item['slug'] ) || ( $lvc_current_slug === $lvc_item['slug'] ) || ( 'Villas' === $lvc_item['label'] && $lvc_villas_ctx );
+					$lvc_is_active = ( $lvc_first_segment === $lvc_item['slug'] ) || ( $lvc_current_slug === $lvc_item['slug'] ) || ( 'Villas' === $lvc_item['label'] && $lvc_villas_ctx ) || ( 'Areas' === $lvc_item['label'] && $lvc_areas_ctx );
 					echo '<a href="' . esc_url( $lvc_item['url'] ) . '" class="lvc-header__nav-link' . ( $lvc_is_active ? ' lvc-header__nav-link--active' : '' ) . '">' . esc_html( $lvc_item['label'] ) . '</a>';
 				}
 			}
@@ -705,7 +714,7 @@ body.lvc-menu-open { overflow: hidden; }
 		) );
 	} else {
 		foreach ( $lvc_nav_items as $lvc_item ) {
-			$lvc_is_active = ( $lvc_first_segment === $lvc_item['slug'] ) || ( $lvc_current_slug === $lvc_item['slug'] ) || ( 'Villas' === $lvc_item['label'] && $lvc_villas_ctx );
+			$lvc_is_active = ( $lvc_first_segment === $lvc_item['slug'] ) || ( $lvc_current_slug === $lvc_item['slug'] ) || ( 'Villas' === $lvc_item['label'] && $lvc_villas_ctx ) || ( 'Areas' === $lvc_item['label'] && $lvc_areas_ctx );
 			echo '<a href="' . esc_url( $lvc_item['url'] ) . '" class="lvc-header__mobile-nav-link' . ( $lvc_is_active ? ' lvc-header__mobile-nav-link--active' : '' ) . '">' . esc_html( $lvc_item['label'] ) . '</a>';
 		}
 	}

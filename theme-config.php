@@ -109,6 +109,9 @@ if ( ! function_exists( 'lvc_config' ) ) {
 					'how'      => 'how-it-works',
 					'owners'   => 'list-your-villa',
 					'magazine' => 'magazine',
+					// Must match a real published Page with this exact slug —
+					// page-areas.php (WP template hierarchy) renders it.
+					'areas'    => 'areas',
 				),
 
 				/* ── Inquiry engine ───────────────────────────────────── */
