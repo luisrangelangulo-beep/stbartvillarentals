@@ -31,6 +31,7 @@ foreach ( array(
 	'inc/conversion/inquiry-frontend.php',
 	'inc/sync/rest-sync.php',
 	'inc/seo/schema.php',
+	'inc/seo/retired-terms.php',
 	'inc/nav/mega-menu.php',
 	'inc/home/acf-homepage.php',
 	'inc/page/core-pages.php',
