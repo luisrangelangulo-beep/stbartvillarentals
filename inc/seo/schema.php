@@ -254,7 +254,14 @@ if ( ! function_exists( 'lvc_schema_article' ) ) {
 /* ── Rank Math de-duplication: let the theme own schema. ─────────────────── */
 if ( lvc_config( 'theme_owns_schema', true ) ) {
 	add_filter( 'rank_math/json_ld', function ( $data ) {
-		if ( is_singular( lvc_config( 'cpt', 'villa' ) ) || is_tax( array_keys( (array) lvc_config( 'taxonomies', array() ) ) ) || is_post_type_archive( lvc_config( 'cpt', 'villa' ) ) ) {
+		// is_singular( 'post' ) added alongside the villa CPT: single.php calls
+		// lvc_schema_article() directly for every magazine post, but this filter
+		// previously only stripped Rank Math's own schema on villa singles/
+		// taxonomies/archive — so a magazine post was emitting TWO Article
+		// JSON-LD blocks (Rank Math's default `post` rich snippet, plus the
+		// theme's own) until this was added. Found while wiring up the magazine
+		// content program's schema; nothing else in this filter changes.
+		if ( is_singular( lvc_config( 'cpt', 'villa' ) ) || is_tax( array_keys( (array) lvc_config( 'taxonomies', array() ) ) ) || is_post_type_archive( lvc_config( 'cpt', 'villa' ) ) || is_singular( 'post' ) ) {
 			return array();
 		}
 		// Enrich the single authoritative Organization node (Rank Math's) in place
